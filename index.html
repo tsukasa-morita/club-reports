@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>週次マーケットレポート｜経済・投資体験CLUB</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-dark: #085041;
+    --green-mid: #0F6E56;
+    --green-pale: #9FE1CB;
+    --blue: #378ADD;
+    --purple: #534AB7;
+    --amber: #BA7517;
+    --red: #D85A30;
+    --red-light: #FAECE7;
+    --blue-light: #E6F1FB;
+    --amber-light: #FAEEDA;
+    --gray: #888780;
+    --bg: #F8F7F4;
+    --bg-card: #FFFFFF;
+    --bg-muted: #F1EFE8;
+    --text: #1a1a18;
+    --text-muted: #5F5E5A;
+    --text-hint: #888780;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.15);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { overflow-y: auto;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .page-header {
+    background: var(--text);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .page-header .brand { font-size: 13px; letter-spacing: 0.08em; opacity: 0.7; }
+  .page-header .deadline { font-size: 12px; background: var(--red); color: white; padding: 4px 12px; border-radius: 20px; }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .report-header { margin-bottom: 2rem; }
+  .report-vol { font-size: 12px; color: var(--text-hint); letter-spacing: 0.1em; margin-bottom: 6px; }
+  .report-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+  .report-date { font-size: 13px; color: var(--text-muted); }
+
+  .theme-box {
+    background: var(--green-light);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--green);
+  }
+  .theme-label { font-size: 11px; color: var(--green-mid); letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 700; }
+  .theme-title { font-size: 18px; font-weight: 700; color: var(--green-dark); margin-bottom: 0.75rem; line-height: 1.5; }
+  .theme-toc { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+  .theme-toc li { font-size: 12px; background: var(--green-pale); color: var(--green-dark); padding: 3px 12px; border-radius: 20px; font-weight: 500; }
+
+  .sec { margin-bottom: 2.5rem; }
+  .sec-title {
+    font-size: 16px; font-weight: 700; color: var(--text);
+    margin-bottom: 1rem; padding-left: 12px;
+    border-left: 3px solid var(--green);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .summary-box {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text);
+  }
+
+  .news-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    transition: box-shadow 0.2s;
+  }
+  .news-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .news-tag { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 4px; margin-bottom: 8px; font-weight: 500; background: var(--green-light); color: var(--green-mid); }
+  .news-tag.red { background: var(--red-light); color: #993C1D; }
+  .news-tag.blue { background: var(--blue-light); color: #185FA5; }
+  .news-tag.amber { background: var(--amber-light); color: #854F0B; }
+  .news-headline { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.5; }
+  .news-body { overflow-y: auto; font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+
+  .cat-section { margin-bottom: 2rem; }
+  .cat-title {
+    font-size: 12px; font-weight: 700; color: var(--text-muted);
+    margin-bottom: 0.75rem; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-strong);
+    letter-spacing: 0.06em;
+  }
+  .asset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0.75rem; }
+  .asset-col { display: flex; flex-direction: column; gap: 8px; }
+
+  .metric-card {
+    background: var(--bg-muted);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem 1rem;
+  }
+  .metric-name { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .metric-value { font-size: 18px; font-weight: 700; color: var(--text); }
+  .metric-change { font-size: 12px; margin-top: 4px; font-weight: 500; }
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+
+  .chart-wrap {
+    background: var(--bg-muted);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    flex: 1;
+  }
+  .chart-label { font-size: 11px; color: var(--text-hint); margin-bottom: 6px; }
+  .chart-area { position: relative; height: 80px; }
+  .chart-area-sm { position: relative; height: 60px; }
+
+  .commentary {
+    font-size: 13px; color: var(--text);
+    line-height: 1.9;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+  }
+
+  .hot-badge {
+    display: inline-block; font-size: 10px;
+    background: var(--red-light); color: #993C1D;
+    padding: 2px 8px; border-radius: 4px;
+    margin-left: 6px; vertical-align: middle; font-weight: 700;
+  }
+
+  .point-list { list-style: none; }
+  .point-list li {
+    font-size: 14px; color: var(--text); line-height: 1.9;
+    padding: 0.75rem 0 0.75rem 1.5rem;
+    position: relative;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .point-list li:last-child { border-bottom: none; }
+  .point-list li::before {
+    content: ""; position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+  }
+
+  .coming-soon {
+    background: var(--bg-card);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem 1rem;
+  }
+  .coming-soon .metric-name { color: var(--text-hint); }
+  .coming-soon .metric-value { font-size: 13px; color: var(--text-hint); font-weight: 400; }
+
+  .footer {
+    text-align: center; font-size: 12px; color: var(--text-hint);
+    padding-top: 2rem; border-top: 0.5px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .cta-box {
+    background: var(--text);
+    color: white;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    margin: 2rem 0;
+  }
+  .cta-box p { font-size: 14px; opacity: 0.8; margin-bottom: 1rem; }
+  .cta-btn {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .cta-btn:hover { background: var(--green-mid); }
+
+  @media (max-width: 600px) {
+    .asset-grid { grid-template-columns: 1fr; }
+    .report-title { font-size: 22px; }
+    .container { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body style="margin:0; padding:0;">
+
+<div class="page-header">
+  <div class="brand">経済・投資体験CLUB</div>
+  <div class="deadline">配分変更：日曜23:59まで</div>
+</div>
+
+<div class="container">
+
+  <div class="report-header">
+    <div class="report-vol">Vol.12｜週次マーケットレポート</div>
+    <h1 class="report-title">週次マーケットレポート</h1>
+    <div class="report-date">2026年4月6日（月）〜 4月10日（金）</div>
+  </div>
+
+  <div class="theme-box">
+    <div class="theme-label">今週のテーマ</div>
+    <div class="theme-title">ホルムズ情勢激変！株・原油・金が乱高下</div>
+    <ul class="theme-toc">
+      <li>今週のまとめ</li>
+      <li>注目ニュース</li>
+      <li>経済指標の動き</li>
+      <li>来週のポイント</li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">今週のまとめ</div>
+    <div class="summary-box">
+      今週は中東のホルムズ海峡をめぐるニュースに世界中の市場が振り回されました。週初は米国とイランの交渉決裂・米海軍の海峡封鎖で原油が1バレル105ドル台に急騰し株価も売りに。しかし週後半にイランが「海峡は開放」と表明すると原油が11%超の急落、株価は急回復しました。日経平均は週間で+約2.7%となり最高値を更新。金は安全資産として高値圏を維持、ビットコインも7万5000ドル台に回復しました。
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">注目ニュース</div>
+    
+    <div class="news-card">
+      <div class="news-tag blue">株式</div>
+      <div class="news-headline">日経平均が最高値を更新！AI・半導体株がけん引</div>
+      <div class="news-body">4月16日の東京市場で日経平均は前日比+1384円（+2.38%）の59,518円で最高値を更新。米・イラン情勢の収束期待でリスク許容度が高まり、AI・半導体関連株に資金が集中しました。ただ翌17日には利益確定売りで1,042円安の58,476円と反落。週間では56,503円→58,476円と約+2.7%の上昇で終えました。S&P500も7,126まで上昇し、週を通じて堅調でした。</div>
+    </div>
+    <div class="news-card">
+      <div class="news-tag red">エネルギー</div>
+      <div class="news-headline">原油が1週間で乱高下！ホルムズ海峡の「封鎖」と「開放」で振り回される</div>
+      <div class="news-body">週明け13日は米国の「逆封鎖」宣言を受けWTI原油が105ドル台まで急騰。しかし17日にイランのアラグチ外相が「ホルムズ海峡は完全に開放されている」と発言すると、WTIは前日比11.5%安の83.85ドルへ急落しました。日本は輸入原油の約9割がホルムズ海峡経由のため、エネルギーコストや生活必需品の値段への影響が続いており、今後の交渉動向が最大の注目点です。</div>
+    </div>
+    <div class="news-card">
+      <div class="news-tag amber">安全資産</div>
+      <div class="news-headline">金は高値圏を維持、ビットコインは7.5万ドル台で反発</div>
+      <div class="news-body">金（ゴールド）は週を通じて4,785〜4,879ドルの高値圏で推移し、地政学リスクへの備えとして引き続き底堅い展開でした。ビットコインは週前半に7万4000ドル台で推移しましたが、17〜18日には一時7万8,000ドル超まで上昇する場面もあり、週末は7万5,000〜7万5,500ドル台で着地。日本の10年国債利回りは2.4%台で推移し、日銀の利上げ観測は後退気味でした。</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">経済指標の動き</div>
+
+    <div class="cat-section">
+      <div class="cat-title">株式</div>
+      <div class="asset-grid">
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">日経平均</div>
+            <div class="metric-value">58,475</div>
+            <div class="metric-change up">週間 +2.7%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">今週の動き</div>
+            <div class="chart-area-sm"><canvas id="c1w"></canvas></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c1m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">S&amp;P500</div>
+            <div class="metric-value">7,126</div>
+            <div class="metric-change up">週間 +4.5%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">今週の動き</div>
+            <div class="chart-area-sm"><canvas id="c2w"></canvas></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c2m"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="commentary">日経・S&P500ともに2月の高値から大きく調整した後、4月に入り反発しています。ただし高値はまだ回復しておらず、関税問題の進展次第で方向感が決まりそうです。</div>
+    </div>
+
+    <div class="cat-section">
+      <div class="cat-title">為替</div>
+      <div class="asset-grid">
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">ドル円</div>
+            <div class="metric-value">158.6円</div>
+            <div class="metric-change down">週間 -0.3%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">今週の動き</div>
+            <div class="chart-area-sm"><canvas id="c3w"></canvas></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c3m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">ユーロ円</div>
+            <div class="metric-value">186.6円</div>
+            <div class="metric-change down">週間 +0.3%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">今週の動き</div>
+            <div class="chart-area-sm"><canvas id="c4w"></canvas></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c4m"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="commentary">円相場は145円台から143円台へじわじわ円高が進んでいます。アメリカ経済への不安からドルが売られやすい状況が続いています。</div>
+    </div>
+
+    <div class="cat-section">
+      <div class="cat-title">金利</div>
+      <div class="asset-grid">
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">日本10年債利回り</div>
+            <div class="metric-value">2.41%</div>
+            <div class="metric-change down">週間 +0.5%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c5m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">米国10年債利回り</div>
+            <div class="metric-value">4.25%</div>
+            <div class="metric-change down">週間 -1.6%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c6m"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="commentary">金利が下がっているということは「景気への不安」のサインの一つです。米国の金利は4%台を維持しており、住宅ローンや企業の借り入れコストに影響しています。</div>
+    </div>
+
+    <div class="cat-section">
+      <div class="cat-title">コモディティ</div>
+      <div class="asset-grid">
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">金（ゴールド）</div>
+            <div class="metric-value">$4,857</div>
+            <div class="metric-change up">週間 +2.0%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c7m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">原油<span class="hot-badge">注目</span></div>
+            <div class="metric-value">$83.8</div>
+            <div class="metric-change up">週間 -13.2%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">今週の動き（注目）</div>
+            <div class="chart-area-sm"><canvas id="c8w"></canvas></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c8m"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="commentary">中東情勢の緊張から原油が急騰しました。原油が上がると、ガソリン・電気代・食品価格にも影響が出てきます。イランとアメリカの関係が今後のカギです。</div>
+    </div>
+
+    <div class="cat-section">
+      <div class="cat-title">暗号資産</div>
+      <div class="asset-grid">
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">ビットコイン</div>
+            <div class="metric-value">$75,570</div>
+            <div class="metric-change up">週間 +6.8%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c9m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">イーサリアム</div>
+            <div class="metric-value">$2,344</div>
+            <div class="metric-change up">週間 +6.9%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c10m"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="commentary">株式市場が荒れる中、暗号資産は比較的安定した動きでした。24時間365日取引できるため、週末の動きにも注目してみましょう。</div>
+    </div>
+
+    <div class="cat-section">
+      <div class="cat-title">市場心理</div>
+      <div class="asset-grid">
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">VIX（恐怖指数）</div>
+            <div class="metric-value">17.5</div>
+            <div class="metric-change down">週間 -9.1%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">3ヶ月のトレンド</div>
+            <div class="chart-area"><canvas id="c11m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="coming-soon">
+            <div class="metric-name">騰落レシオ</div>
+            <div class="metric-value">準備中</div>
+          </div>
+        </div>
+      </div>
+      <div class="commentary">VIXは「マーケットがどれだけ怖がっているか」を示す指数です。20以下なら落ち着いた状態、30を超えると「かなり不安」のサイン。今週は少し落ち着いてきましたがまだ高めの水準です。</div>
+    </div>
+
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">来週のマーケットポイント</div>
+    <ul class="point-list">
+      <li>米・イラン停戦交渉の続報に注目：ホルムズ海峡の「完全開放」が続くかどうかで原油価格・日本の物価・株価が大きく動く。専門家は当面90〜100ドル台での一進一退を予想。</li><li>来週（4/20〜4/24）の日経平均予想レンジは57,000〜60,500円：6万円の大台突破が期待されるが、中東リスクの再燃には要警戒。国内企業の決算シーズンも本格化し、業績見通しが株価を左右する。</li><li>FRBの政策動向とインフレ指標を確認：エネルギー価格高止まりで2026年内の利下げが1回に留まるとの見方が浮上。ドル円は158〜159円台での推移が続いており、為替の方向感も引き続き注視が必要。</li>
+    </ul>
+  </div>
+
+  <div class="cta-box">
+    <p>今週のレポートを読んで、投資配分を見直しましょう。変更は日曜23:59まで受け付けています。</p>
+    <a href="#" class="cta-btn">投資配分を変更する →</a>
+  </div>
+
+  <div class="footer">
+    経済・投資体験CLUB｜週次マーケットレポート Vol.12<br>
+    © 2026 経済・投資体験CLUB. All rights reserved.
+  </div>
+
+</div>
+
+<script>
+function mkLine(id, labels, data, color) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  new Chart(el.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: color,
+        borderWidth: 1.5,
+        pointRadius: 2,
+        pointBackgroundColor: color,
+        fill: true,
+        backgroundColor: color + '18',
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#888', maxTicksLimit: 5 } },
+        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 }, color: '#888', maxTicksLimit: 3, callback: v => v.toLocaleString() } }
+      }
+    }
+  });
+}
+
+const m3 = ['2/3','2/17','3/3','3/17','3/31','4/7','4/14','4/18'];
+const wk = ['月','火','水','木','金'];
+
+mkLine('c1w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [56502.77, 57877.39, 58134.24, 59518.34, 58475.9], '#1D9E75');
+mkLine('c1m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/19', '3/27', '4/2', '4/10', '4/17'], [53846.87, 53322.85, 54253.68, 56941.97, 56825.7, 58850.27, 55620.84, 53819.61, 53372.53, 53373.07, 52463.27, 56924.11, 58475.9], '#1D9E75');
+mkLine('c2w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [6886.24, 6967.38, 7022.95, 7041.28, 7126.06], '#1D9E75');
+mkLine('c2m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [6915.61, 6939.03, 6932.3, 6836.17, 6909.51, 6878.88, 6740.02, 6632.19, 6506.48, 6368.85, 6485.93, 6816.89, 7126.06], '#1D9E75');
+mkLine('c3w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [159.68, 159.21, 158.79, 158.81, 158.58], '#378ADD');
+mkLine('c3m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [158.5, 153.16, 156.78, 152.82, 155.16, 155.86, 157.53, 159.21, 157.92, 159.7, 158.63, 159.11, 158.58], '#378ADD');
+mkLine('c4w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [186.42, 187.34, 187.35, 187.5, 186.6], '#378ADD');
+mkLine('c4m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [186.29, 183.27, 184.65, 181.37, 182.61, 183.95, 182.86, 183.43, 182.82, 184.22, 183.86, 185.99, 186.6], '#378ADD');
+mkLine('c5m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/19', '3/27', '4/3', '4/10', '4/16'], [2.25, 2.25, 2.24, 2.22, 2.12, 2.13, 2.18, 2.25, 2.27, 2.38, 2.39, 2.44, 2.41], '#534AB7');
+mkLine('c6m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [4.24, 4.24, 4.21, 4.06, 4.09, 3.96, 4.13, 4.28, 4.39, 4.44, 4.34, 4.32, 4.25], '#534AB7');
+mkLine('c7m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [4976.2, 4713.9, 4951.2, 5022.0, 5059.3, 5230.5, 5146.1, 5052.5, 4570.4, 4492.0, 4623.5, 4761.9, 4857.6], '#BA7517');
+mkLine('c8w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [99.08, 91.28, 91.29, 94.69, 83.85], '#D85A30');
+mkLine('c8m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [61.07, 65.21, 63.55, 62.89, 66.39, 67.02, 90.9, 98.71, 98.32, 99.64, 112.61, 96.57, 83.85], '#D85A30');
+mkLine('c9m', ['1/25', '2/1', '2/8', '2/15', '2/22', '3/1', '3/8', '3/15', '3/22', '3/29', '4/2', '4/12', '4/19'], [86572.22, 76974.45, 70264.73, 68788.19, 67659.39, 65738.1, 65969.78, 72789.91, 67845.21, 65954.92, 65802.15, 70753.41, 75570.0], '#F0997B');
+mkLine('c10m', ['1/25', '2/1', '2/8', '2/15', '2/22', '3/1', '3/8', '3/15', '3/22', '3/29', '4/2', '4/12', '4/19'], [2815.9, 2267.96, 2088.76, 1966.04, 1957.81, 1939.07, 1936.6, 2177.48, 2053.05, 1982.56, 2019.18, 2192.2, 2344.1], '#AFA9EC');
+mkLine('c11m', m3, [16,18,22,28,32,38,35,17.5], '#854F0B');
+</script>
+</body>
+</html>
