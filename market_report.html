@@ -35,7 +35,7 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
+  body { overflow-y: auto;
     font-family: 'Noto Sans JP', sans-serif;
     background: var(--bg);
     color: var(--text);
@@ -108,7 +108,7 @@
   .news-tag.blue { background: var(--blue-light); color: #185FA5; }
   .news-tag.amber { background: var(--amber-light); color: #854F0B; }
   .news-headline { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.5; }
-  .news-body { font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+  .news-body { overflow-y: auto; font-size: 13px; color: var(--text-muted); line-height: 1.8; }
 
   .cat-section { margin-bottom: 2rem; }
   .cat-title {
@@ -216,7 +216,7 @@
   }
 </style>
 </head>
-<body>
+<body style="margin:0; padding:0;">
 
 <div class="page-header">
   <div class="brand">経済・投資体験CLUB</div>
