@@ -1,0 +1,7 @@
+.env
+*.env
+credentials/
+__pycache__/
+*.log
+.DS_Store
+.claude/

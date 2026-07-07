@@ -128,6 +128,7 @@
   .metric-name { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
   .metric-value { font-size: 18px; font-weight: 700; color: var(--text); }
   .metric-change { font-size: 12px; margin-top: 4px; font-weight: 500; }
+  .metric-rating { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .up { color: var(--green); }
   .down { color: var(--red); }
 
@@ -228,12 +229,12 @@
   <div class="report-header">
     <div class="report-vol">Vol.12｜週次マーケットレポート</div>
     <h1 class="report-title">週次マーケットレポート</h1>
-    <div class="report-date">2026年4月6日（月）〜 4月10日（金）</div>
+    <div class="report-date">2026年7月6日（月）〜 7月10日（金）</div>
   </div>
 
   <div class="theme-box">
     <div class="theme-label">今週のテーマ</div>
-    <div class="theme-title">ホルムズ情勢激変！株・原油・金が乱高下</div>
+    <div class="theme-title">方向感を探る1週間</div>
     <ul class="theme-toc">
       <li>今週のまとめ</li>
       <li>注目ニュース</li>
@@ -245,7 +246,7 @@
   <div class="sec">
     <div class="sec-title">今週のまとめ</div>
     <div class="summary-box">
-      今週は中東のホルムズ海峡をめぐるニュースに世界中の市場が振り回されました。週初は米国とイランの交渉決裂・米海軍の海峡封鎖で原油が1バレル105ドル台に急騰し株価も売りに。しかし週後半にイランが「海峡は開放」と表明すると原油が11%超の急落、株価は急回復しました。日経平均は週間で+約2.7%となり最高値を更新。金は安全資産として高値圏を維持、ビットコインも7万5000ドル台に回復しました。
+      日経平均は下落し（-2.6%）アメリカのS&P500も小幅に横ばいしました（+0.2%）。為替は161.9円台で安定していました。VIX（恐怖指数）は15.6と落ち着いた水準です。安全資産の金は大きく上昇（+3.2%）しました。
     </div>
   </div>
 
@@ -253,19 +254,19 @@
     <div class="sec-title">注目ニュース</div>
     
     <div class="news-card">
-      <div class="news-tag blue">株式</div>
-      <div class="news-headline">日経平均が最高値を更新！AI・半導体株がけん引</div>
-      <div class="news-body">4月16日の東京市場で日経平均は前日比+1384円（+2.38%）の59,518円で最高値を更新。米・イラン情勢の収束期待でリスク許容度が高まり、AI・半導体関連株に資金が集中しました。ただ翌17日には利益確定売りで1,042円安の58,476円と反落。週間では56,503円→58,476円と約+2.7%の上昇で終えました。S&P500も7,126まで上昇し、週を通じて堅調でした。</div>
+      <div class="news-tag red">株式</div>
+      <div class="news-headline">日経平均、今週は下落（-2.6%）</div>
+      <div class="news-body">今週の日経平均は68,256円で取引を終えました。週間では下落し、変化率は-2.6%でした。アメリカのS&P500は+0.2%と対照的に横ばいしました。</div>
     </div>
     <div class="news-card">
-      <div class="news-tag red">エネルギー</div>
-      <div class="news-headline">原油が1週間で乱高下！ホルムズ海峡の「封鎖」と「開放」で振り回される</div>
-      <div class="news-body">週明け13日は米国の「逆封鎖」宣言を受けWTI原油が105ドル台まで急騰。しかし17日にイランのアラグチ外相が「ホルムズ海峡は完全に開放されている」と発言すると、WTIは前日比11.5%安の83.85ドルへ急落しました。日本は輸入原油の約9割がホルムズ海峡経由のため、エネルギーコストや生活必需品の値段への影響が続いており、今後の交渉動向が最大の注目点です。</div>
+      <div class="news-tag amber">為替</div>
+      <div class="news-headline">為替は安定、ドル円161.9円台</div>
+      <div class="news-body">ドル円は161.9円台（-0.0%）と小幅な動きにとどまりました。ユーロ円は185.0円（+0.1%）でした。</div>
     </div>
     <div class="news-card">
-      <div class="news-tag amber">安全資産</div>
-      <div class="news-headline">金は高値圏を維持、ビットコインは7.5万ドル台で反発</div>
-      <div class="news-body">金（ゴールド）は週を通じて4,785〜4,879ドルの高値圏で推移し、地政学リスクへの備えとして引き続き底堅い展開でした。ビットコインは週前半に7万4000ドル台で推移しましたが、17〜18日には一時7万8,000ドル超まで上昇する場面もあり、週末は7万5,000〜7万5,500ドル台で着地。日本の10年国債利回りは2.4%台で推移し、日銀の利上げ観測は後退気味でした。</div>
+      <div class="news-tag amber">コモディティ</div>
+      <div class="news-headline">金は上昇、原油は上昇</div>
+      <div class="news-body">金は$4,153（+3.2%）、原油は$70.5（+1.5%）でした。ビットコインは$63,935（+9.2%）と仮想通貨市場も活況でした。</div>
     </div>
   </div>
 
@@ -278,11 +279,12 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">日経平均</div>
-            <div class="metric-value">58,475</div>
-            <div class="metric-change up">週間 +2.7%</div>
+            <div class="metric-value">68,256</div>
+            <div class="metric-change down">前週末比 -2.6%</div>
+            <div class="metric-rating">7/7時点</div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">今週の動き</div>
+            <div class="chart-label">直近2週間の動き</div>
             <div class="chart-area-sm"><canvas id="c1w"></canvas></div>
           </div>
           <div class="chart-wrap">
@@ -293,11 +295,11 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">S&amp;P500</div>
-            <div class="metric-value">7,126</div>
-            <div class="metric-change up">週間 +4.5%</div>
+            <div class="metric-value">7,518</div>
+            <div class="metric-change up">前週末比 +0.2%</div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">今週の動き</div>
+            <div class="chart-label">直近2週間の動き</div>
             <div class="chart-area-sm"><canvas id="c2w"></canvas></div>
           </div>
           <div class="chart-wrap">
@@ -315,11 +317,11 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">ドル円</div>
-            <div class="metric-value">158.6円</div>
-            <div class="metric-change down">週間 -0.3%</div>
+            <div class="metric-value">161.9円</div>
+            <div class="metric-change down">前週末比 -0.0%</div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">今週の動き</div>
+            <div class="chart-label">直近2週間の動き</div>
             <div class="chart-area-sm"><canvas id="c3w"></canvas></div>
           </div>
           <div class="chart-wrap">
@@ -330,11 +332,11 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">ユーロ円</div>
-            <div class="metric-value">186.6円</div>
-            <div class="metric-change down">週間 +0.3%</div>
+            <div class="metric-value">185.0円</div>
+            <div class="metric-change up">前週末比 +0.1%</div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">今週の動き</div>
+            <div class="chart-label">直近2週間の動き</div>
             <div class="chart-area-sm"><canvas id="c4w"></canvas></div>
           </div>
           <div class="chart-wrap">
@@ -352,8 +354,9 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">日本10年債利回り</div>
-            <div class="metric-value">2.41%</div>
-            <div class="metric-change down">週間 +0.5%</div>
+            <div class="metric-value">2.82%</div>
+            <div class="metric-change up">前週末比 +4.1%</div>
+            <div class="metric-rating">7/6時点</div>
           </div>
           <div class="chart-wrap">
             <div class="chart-label">3ヶ月のトレンド</div>
@@ -363,8 +366,8 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">米国10年債利回り</div>
-            <div class="metric-value">4.25%</div>
-            <div class="metric-change down">週間 -1.6%</div>
+            <div class="metric-value">4.52%</div>
+            <div class="metric-change up">前週末比 +2.3%</div>
           </div>
           <div class="chart-wrap">
             <div class="chart-label">3ヶ月のトレンド</div>
@@ -381,8 +384,12 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">金（ゴールド）</div>
-            <div class="metric-value">$4,857</div>
-            <div class="metric-change up">週間 +2.0%</div>
+            <div class="metric-value">$4,153</div>
+            <div class="metric-change up">前週末比 +3.2%</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">直近2週間の動き</div>
+            <div class="chart-area-sm"><canvas id="c7w"></canvas></div>
           </div>
           <div class="chart-wrap">
             <div class="chart-label">3ヶ月のトレンド</div>
@@ -391,12 +398,12 @@
         </div>
         <div class="asset-col">
           <div class="metric-card">
-            <div class="metric-name">原油<span class="hot-badge">注目</span></div>
-            <div class="metric-value">$83.8</div>
-            <div class="metric-change up">週間 -13.2%</div>
+            <div class="metric-name">原油</div>
+            <div class="metric-value">$70.5</div>
+            <div class="metric-change up">前週末比 +1.5%</div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">今週の動き（注目）</div>
+            <div class="chart-label">直近2週間の動き</div>
             <div class="chart-area-sm"><canvas id="c8w"></canvas></div>
           </div>
           <div class="chart-wrap">
@@ -414,8 +421,8 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">ビットコイン</div>
-            <div class="metric-value">$75,570</div>
-            <div class="metric-change up">週間 +6.8%</div>
+            <div class="metric-value">$63,935</div>
+            <div class="metric-change up">前週末比 +9.2%</div>
           </div>
           <div class="chart-wrap">
             <div class="chart-label">3ヶ月のトレンド</div>
@@ -425,8 +432,8 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">イーサリアム</div>
-            <div class="metric-value">$2,344</div>
-            <div class="metric-change up">週間 +6.9%</div>
+            <div class="metric-value">$1,799</div>
+            <div class="metric-change up">前週末比 +14.6%</div>
           </div>
           <div class="chart-wrap">
             <div class="chart-label">3ヶ月のトレンド</div>
@@ -443,8 +450,8 @@
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">VIX（恐怖指数）</div>
-            <div class="metric-value">17.5</div>
-            <div class="metric-change down">週間 -9.1%</div>
+            <div class="metric-value">15.6</div>
+            <div class="metric-change down">前週末比 -5.3%</div>
           </div>
           <div class="chart-wrap">
             <div class="chart-label">3ヶ月のトレンド</div>
@@ -452,9 +459,17 @@
           </div>
         </div>
         <div class="asset-col">
-          <div class="coming-soon">
-            <div class="metric-name">騰落レシオ</div>
-            <div class="metric-value">準備中</div>
+          <div class="metric-card">
+            <div class="metric-name">Fear &amp; Greed Index</div>
+            <div class="metric-value">43.0</div>
+            <div class="metric-change up">前週末比 +41.2%</div>
+            <div class="metric-rating">fear</div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-label">Fear &amp; Greed ゲージ</div>
+            <div style="position:relative;padding:8px 0;">
+              <canvas id="fngGauge" style="width:100%;"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -466,7 +481,7 @@
   <div class="sec">
     <div class="sec-title">来週のマーケットポイント</div>
     <ul class="point-list">
-      <li>米・イラン停戦交渉の続報に注目：ホルムズ海峡の「完全開放」が続くかどうかで原油価格・日本の物価・株価が大きく動く。専門家は当面90〜100ドル台での一進一退を予想。</li><li>来週（4/20〜4/24）の日経平均予想レンジは57,000〜60,500円：6万円の大台突破が期待されるが、中東リスクの再燃には要警戒。国内企業の決算シーズンも本格化し、業績見通しが株価を左右する。</li><li>FRBの政策動向とインフレ指標を確認：エネルギー価格高止まりで2026年内の利下げが1回に留まるとの見方が浮上。ドル円は158〜159円台での推移が続いており、為替の方向感も引き続き注視が必要。</li>
+      <li>VIXは15.6と落ち着いた水準。引き続き主要指標の動きを確認しましょう</li><li>米国10年債利回りは4.52%と高水準。株式市場への影響に注目</li><li>来週も日米の経済指標の発表に注目しましょう</li>
     </ul>
   </div>
 
@@ -516,22 +531,75 @@ function mkLine(id, labels, data, color) {
 const m3 = ['2/3','2/17','3/3','3/17','3/31','4/7','4/14','4/18'];
 const wk = ['月','火','水','木','金'];
 
-mkLine('c1w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [56502.77, 57877.39, 58134.24, 59518.34, 58475.9], '#1D9E75');
-mkLine('c1m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/19', '3/27', '4/2', '4/10', '4/17'], [53846.87, 53322.85, 54253.68, 56941.97, 56825.7, 58850.27, 55620.84, 53819.61, 53372.53, 53373.07, 52463.27, 56924.11, 58475.9], '#1D9E75');
-mkLine('c2w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [6886.24, 6967.38, 7022.95, 7041.28, 7126.06], '#1D9E75');
-mkLine('c2m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [6915.61, 6939.03, 6932.3, 6836.17, 6909.51, 6878.88, 6740.02, 6632.19, 6506.48, 6368.85, 6485.93, 6816.89, 7126.06], '#1D9E75');
-mkLine('c3w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [159.68, 159.21, 158.79, 158.81, 158.58], '#378ADD');
-mkLine('c3m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [158.5, 153.16, 156.78, 152.82, 155.16, 155.86, 157.53, 159.21, 157.92, 159.7, 158.63, 159.11, 158.58], '#378ADD');
-mkLine('c4w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [186.42, 187.34, 187.35, 187.5, 186.6], '#378ADD');
-mkLine('c4m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [186.29, 183.27, 184.65, 181.37, 182.61, 183.95, 182.86, 183.43, 182.82, 184.22, 183.86, 185.99, 186.6], '#378ADD');
-mkLine('c5m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/19', '3/27', '4/3', '4/10', '4/16'], [2.25, 2.25, 2.24, 2.22, 2.12, 2.13, 2.18, 2.25, 2.27, 2.38, 2.39, 2.44, 2.41], '#534AB7');
-mkLine('c6m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [4.24, 4.24, 4.21, 4.06, 4.09, 3.96, 4.13, 4.28, 4.39, 4.44, 4.34, 4.32, 4.25], '#534AB7');
-mkLine('c7m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [4976.2, 4713.9, 4951.2, 5022.0, 5059.3, 5230.5, 5146.1, 5052.5, 4570.4, 4492.0, 4623.5, 4761.9, 4857.6], '#BA7517');
-mkLine('c8w', ['4/13', '4/14', '4/15', '4/16', '4/17'], [99.08, 91.28, 91.29, 94.69, 83.85], '#D85A30');
-mkLine('c8m', ['1/23', '1/30', '2/6', '2/13', '2/20', '2/27', '3/6', '3/13', '3/20', '3/27', '4/2', '4/10', '4/17'], [61.07, 65.21, 63.55, 62.89, 66.39, 67.02, 90.9, 98.71, 98.32, 99.64, 112.61, 96.57, 83.85], '#D85A30');
-mkLine('c9m', ['1/25', '2/1', '2/8', '2/15', '2/22', '3/1', '3/8', '3/15', '3/22', '3/29', '4/2', '4/12', '4/19'], [86572.22, 76974.45, 70264.73, 68788.19, 67659.39, 65738.1, 65969.78, 72789.91, 67845.21, 65954.92, 65802.15, 70753.41, 75570.0], '#F0997B');
-mkLine('c10m', ['1/25', '2/1', '2/8', '2/15', '2/22', '3/1', '3/8', '3/15', '3/22', '3/29', '4/2', '4/12', '4/19'], [2815.9, 2267.96, 2088.76, 1966.04, 1957.81, 1939.07, 1936.6, 2177.48, 2053.05, 1982.56, 2019.18, 2192.2, 2344.1], '#AFA9EC');
-mkLine('c11m', m3, [16,18,22,28,32,38,35,17.5], '#854F0B');
+mkLine('c1w', ['6/19', '6/22', '6/23', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [71250.06, 72353.96, 69788.38, 69468.11, 70062.32, 70474.96, 68733.15, 69744.07, 69737.69, 68256.96], '#1D9E75');
+mkLine('c1m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/19', '6/23', '7/3', '7/7'], [58475.9, 59716.18, 59513.12, 62713.65, 61409.29, 63339.07, 66329.5, 66588.12, 66020.04, 71250.06, 69788.38, 69744.07, 68256.96], '#1D9E75');
+mkLine('c2w', ['6/18', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7'], [7500.58, 7472.79, 7365.46, 7358.22, 7440.43, 7499.36, 7483.23, 7483.24, 7537.43, 7518.07], '#1D9E75');
+mkLine('c2m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/18', '6/24', '7/2', '7/7'], [7126.06, 7138.89, 7230.12, 7398.93, 7408.5, 7473.47, 7580.06, 7383.74, 7431.46, 7500.58, 7358.22, 7483.24, 7518.07], '#1D9E75');
+mkLine('c3w', ['6/23', '6/24', '6/25', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [161.55, 161.56, 161.74, 161.79, 161.92, 162.63, 162.54, 161.45, 161.45, 161.88], '#378ADD');
+mkLine('c3m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/30', '6/5', '6/13', '6/20', '6/25', '7/3', '7/7'], [159.2, 159.56, 157.02, 156.87, 158.73, 159.04, 159.26, 160.29, 160.18, 161.27, 161.74, 161.45, 161.88], '#378ADD');
+mkLine('c4w', ['6/23', '6/24', '6/25', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [184.59, 183.83, 183.63, 184.19, 184.9, 185.61, 184.92, 184.4, 184.65, 185.0], '#378ADD');
+mkLine('c4m', ['4/17', '4/24', '5/3', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/19', '6/25', '7/3', '7/7'], [187.56, 186.78, 184.16, 184.04, 184.7, 184.72, 185.71, 184.68, 185.34, 184.82, 183.63, 184.4, 185.0], '#378ADD');
+mkLine('c5m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/19', '6/23', '7/3', '7/6'], [2.43, 2.44, 2.51, 2.48, 2.69, 2.75, 2.66, 2.67, 2.64, 2.66, 2.68, 2.77, 2.82], '#534AB7');
+mkLine('c6m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/18', '6/24', '7/2', '7/7'], [4.25, 4.31, 4.38, 4.36, 4.6, 4.56, 4.45, 4.54, 4.49, 4.45, 4.4, 4.49, 4.52], '#534AB7');
+mkLine('c7w', ['6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7'], [4172.9, 4229.2, 4115.6, 4026.4, 4022.3, 4022.9, 4068.3, 4112.7, 4155.1, 4153.0], '#BA7517');
+mkLine('c7m', ['4/17', '4/26', '5/1', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/19', '6/24', '7/2', '7/7'], [4857.6, 4694.0, 4625.6, 4706.1, 4540.9, 4523.2, 4572.9, 4364.3, 4313.1, 4172.9, 4026.4, 4112.7, 4153.0], '#BA7517');
+mkLine('c8w', ['6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7'], [76.54, 75.4, 72.71, 69.98, 70.75, 69.5, 68.58, 68.69, 68.55, 70.53], '#D85A30');
+mkLine('c8m', ['4/17', '4/26', '5/1', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/19', '6/24', '7/2', '7/7'], [83.85, 96.16, 102.5, 98.46, 102.6, 96.6, 89.4, 92.69, 80.96, 76.54, 69.98, 68.69, 70.53], '#D85A30');
+mkLine('c9m', ['4/19', '4/26', '5/3', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/21', '6/28', '7/5', '7/7'], [73856.35, 78657.54, 78714.99, 80670.6, 78127.99, 76624.01, 73782.54, 60845.96, 64384.64, 64190.45, 59532.34, 63547.88, 63935.75], '#F0997B');
+mkLine('c10m', ['4/19', '4/26', '5/3', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/21', '6/28', '7/5', '7/7'], [2264.92, 2369.73, 2316.68, 2327.4, 2180.28, 2114.41, 2019.41, 1569.09, 1678.94, 1736.13, 1570.36, 1783.01, 1799.34], '#AFA9EC');
+mkLine('c11m', m3, [16,18,22,28,32,38,35,15.6], '#854F0B');
+
+// Fear & Greed ゲージ（SVG動的生成）
+(function() {
+  const score = 43.0;
+  const container = document.getElementById('fngGauge').parentElement;
+
+  const cx = 150, cy = 148, r = 108;
+  const gap = 3.2;
+
+  function point(s) {
+    const angle = Math.PI * (1 - s / 100);
+    return [
+      Math.round((cx + r * Math.cos(angle)) * 10) / 10,
+      Math.round((cy - r * Math.sin(angle)) * 10) / 10
+    ];
+  }
+
+  const zones = [
+    [0,  25,  '#E8533A'],
+    [25, 45,  '#F5921E'],
+    [45, 55,  '#F5C518'],
+    [55, 75,  '#8CC63F'],
+    [75, 100, '#2BAE7E'],
+  ];
+
+  const activeZone = zones.find(z => score >= z[0] && score < z[1]) || zones[4];
+  const zoneLabels = ['極度の恐怖', '恐怖', '中立', '強欲', '極度の強欲'];
+  const activeLabel = zoneLabels[zones.indexOf(activeZone)];
+
+  let paths = '';
+  zones.forEach(([from_s, to_s, color], i) => {
+    const s1 = i === 0 ? from_s : from_s + gap;
+    const s2 = i === zones.length - 1 ? to_s : to_s - gap;
+    const p1 = point(s1);
+    const p2 = point(s2);
+    const large = (s2 - s1) > 50 ? 1 : 0;
+    paths += `<path d="M ${p1[0]},${p1[1]} A${r},${r} 0 ${large},1 ${p2[0]},${p2[1]}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round"/>`;
+  });
+
+  const dot = point(score);
+  const svg = `<svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;display:block;margin:0 auto;">
+    ${paths}
+    <circle cx="${dot[0]}" cy="${dot[1]}" r="15" fill="#F1EFE8"/>
+    <circle cx="${dot[0]}" cy="${dot[1]}" r="9" fill="white"/>
+    <text x="150" y="150" font-size="42" font-weight="bold" fill="#1a1a18" text-anchor="middle" font-family="sans-serif">${score.toFixed(1)}</text>
+    <text x="150" y="170" font-size="14" fill="#888" text-anchor="middle" font-family="sans-serif">${activeLabel}</text>
+  </svg>`;
+
+  const canvas = document.getElementById('fngGauge');
+  canvas.style.display = 'none';
+  container.insertAdjacentHTML('beforeend', svg);
+})();
 </script>
 </body>
 </html>
