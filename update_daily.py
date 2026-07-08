@@ -1,4 +1,5 @@
 # update_daily_full.py - ログ出力機能付き
+import sys
 import yfinance as yf
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -10,6 +11,10 @@ import time
 import os
 import signal
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "market_data_lib"))
+from yfinance_fetch import fetch_ohlc
+from fred_fetch import fetch_nikkei_fred
 
 # ===== ログ出力クラス =====
 class Logger:
@@ -128,15 +133,12 @@ ticker_map = {
     'BTC': 'BTC-USD', 'ETH': 'ETH-USD', 'VIX': '^VIX', 'AdvanceDecline': None, 'MarginRatio': None
 }
 
-# ===== 日経平均取得（FRED・NIKKEI225）=====
+# ===== 日経平均取得（FRED・NIKKEI225、market_data_lib経由）=====
 # yfinanceの^N225はYahoo側で指数ティッカー特有の反映遅延（1日以上）があるため、
 # 同じ実測値をより早く公開しているFREDのNIKKEI225シリーズを正式ソースとする
 def get_nikkei_fred():
     start = (datetime.today() - timedelta(days=10)).strftime('%Y-%m-%d')
-    series = fred.get_series('NIKKEI225', observation_start=start)
-    df = series.dropna().reset_index()
-    df.columns = ['Date', 'Close']
-    return df
+    return fetch_nikkei_fred(fred, start)
 
 # ===== 日本10年債取得（財務省CSV）=====
 def get_jgb10y():
@@ -173,17 +175,17 @@ def update_daily(key, sheet_name):
         else:
             ticker = ticker_map[key]
             start = (datetime.today() - timedelta(days=10)).strftime('%Y-%m-%d')
-            df = yf.download(ticker, start=start, interval="1d", progress=False)
+            if key in ['USDJPY', 'EURJPY']:
+                cols = ['Date', 'Open', 'High', 'Low', 'Close']
+            elif key in ['VIX', 'US10Y', 'JGB10Y', 'AdvanceDecline', 'MarginRatio']:
+                cols = ['Date', 'Close']
+            else:
+                cols = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+            # auto_adjust=True: 従来のyf.download()呼び出し（未指定＝yfinanceのデフォルト）を維持
+            df = fetch_ohlc(ticker, start=start, columns=cols, auto_adjust=True)
             if df.empty:
                 logger.log(f"⏭️  {sheet_name}: データなし")
                 return
-            df.reset_index(inplace=True)
-            if key in ['USDJPY', 'EURJPY']:
-                df = df[['Date', 'Open', 'High', 'Low', 'Close']]
-            elif key in ['VIX', 'US10Y', 'JGB10Y', 'AdvanceDecline', 'MarginRatio']:
-                df = df[['Date', 'Close']]
-            else:
-                df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
 
         df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%Y-%m-%d')
         df = df.replace({np.nan: None})
