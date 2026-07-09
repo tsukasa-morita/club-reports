@@ -1151,17 +1151,24 @@ document.querySelectorAll('.cat-tab').forEach(btn => {
 });
 </script>
 
-<div id="archive" style="max-width:840px;margin:0 auto;padding:1rem 1.5rem 2rem;font-family:'LINE Seed JP','Noto Sans JP',sans-serif;">
+<div id="archive" style="max-width:840px;margin:0 auto;padding:1rem 1.5rem 2rem;">
   <hr style="margin:2rem 0;border:0.5px solid rgba(0,0,0,0.1);">
-  <div style="font-size:14px;font-weight:700;margin-bottom:1rem;color:#1a1a18;">過去のレポート</div>
-  <ul style="list-style:none;padding:0;">
-    <li><a href="/20260709.html">2026年07月09日のレポート</a></li>
-<li><a href="/20260708.html">2026年07月08日のレポート</a></li>
-<li><a href="/20260426.html">2026年04月26日のレポート</a></li>
-<li><a href="/20260420.html">2026年04月20日のレポート</a></li>
-<li><a href="/20260419.html">2026年04月19日のレポート</a></li>
-
-  </ul>
+  <div style="font-size:14px;font-weight:700;margin-bottom:1rem;color:var(--text);">過去のレポート</div>
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;">
+    
+    <a href="/20260709.html" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem 1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:13px;font-weight:900;color:var(--text);margin-bottom:4px;">方向感を探る1週間</div>
+      <div style="font-size:11px;color:var(--text-hint);">2026年7月6日（月）〜 7月10日（金）</div>
+    </a>
+    <a href="/20260708.html" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem 1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:13px;font-weight:900;color:var(--text);">2026年07月08日のレポート</div>
+      
+    </a>
+    <a href="/20260426.html" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem 1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:13px;font-weight:900;color:var(--text);">2026年04月26日のレポート</div>
+      
+    </a>
+  </div>
 </div>
 </body>
 </html>

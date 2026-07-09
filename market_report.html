@@ -4,39 +4,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>週次マーケットレポート｜経済・投資体験CLUB</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 <style>
+  @font-face {
+    font-family: 'LINE Seed JP';
+    src: url('fonts/LINESeedJP_Rg.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'LINE Seed JP';
+    src: url('fonts/LINESeedJP_Bd.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'LINE Seed JP';
+    src: url('fonts/LINESeedJP_Eb.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+  }
+
   :root {
-    --green: #1D9E75;
-    --green-light: #E1F5EE;
-    --green-dark: #085041;
-    --green-mid: #0F6E56;
-    --green-pale: #9FE1CB;
-    --blue: #378ADD;
-    --purple: #534AB7;
-    --amber: #BA7517;
-    --red: #D85A30;
-    --red-light: #FAECE7;
-    --blue-light: #E6F1FB;
-    --amber-light: #FAEEDA;
+    --green: #0F9D6C;
+    --green-light: #D6F5E8;
+    --green-dark: #076B4A;
+    --green-mid: #0C8A5F;
+    --green-pale: #9FE8CB;
+
+    --blue: #2E7DE1;
+    --blue-light: #DCEAFE;
+    --blue-dark: #1B4F9C;
+
+    --amber: #E08A00;
+    --amber-light: #FDECC8;
+    --amber-dark: #8A5300;
+
+    --purple: #7C4DFF;
+    --purple-light: #E7DEFF;
+    --purple-dark: #4E2AAE;
+
+    --red: #E24C3F;
+    --red-light: #FBDCD8;
+    --red-dark: #9C2E23;
+
+    --pink: #E24C93;
+    --pink-light: #FCDEED;
+    --pink-dark: #9C2E63;
+
+    --teal: #0DA5A5;
+    --teal-light: #D3F3F3;
+    --teal-dark: #076E6E;
+
     --gray: #888780;
-    --bg: #F8F7F4;
+    --bg: #F0F4F8;
     --bg-card: #FFFFFF;
-    --bg-muted: #F1EFE8;
-    --text: #1a1a18;
-    --text-muted: #5F5E5A;
-    --text-hint: #888780;
-    --border: rgba(0,0,0,0.08);
-    --border-strong: rgba(0,0,0,0.15);
-    --radius: 12px;
-    --radius-sm: 8px;
+    --bg-muted: #E1E9F0;
+    --text: #1a2a3a;
+    --text-muted: #5F6B7A;
+    --text-hint: #8894A0;
+    --border: rgba(26,58,92,0.08);
+    --border-strong: rgba(26,58,92,0.15);
+    --radius: 16px;
+    --radius-sm: 12px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body { overflow-y: auto;
-    font-family: 'Noto Sans JP', sans-serif;
+    font-family: 'LINE Seed JP', sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.7;
@@ -54,106 +92,193 @@
     top: 0;
     z-index: 100;
   }
-  .page-header .brand { font-size: 13px; letter-spacing: 0.08em; opacity: 0.7; }
-  .page-header .deadline { font-size: 12px; background: var(--red); color: white; padding: 4px 12px; border-radius: 20px; }
+  .page-header .brand { font-size: 13px; letter-spacing: 0.08em; opacity: 0.8; font-weight: 700; }
+  .page-header .deadline { font-size: 12px; background: var(--red); color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
 
-  .container { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .container { max-width: 840px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
 
-  .report-header { margin-bottom: 2rem; }
-  .report-vol { font-size: 12px; color: var(--text-hint); letter-spacing: 0.1em; margin-bottom: 6px; }
-  .report-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+  .report-header { margin-bottom: 1.5rem; }
+  .report-vol { font-size: 12px; color: var(--text-hint); letter-spacing: 0.1em; margin-bottom: 6px; font-weight: 700; }
+  .report-title { font-family: 'LINE Seed JP', sans-serif; font-weight: 900; font-size: 30px; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
   .report-date { font-size: 13px; color: var(--text-muted); }
 
   .theme-box {
-    background: var(--green-light);
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, var(--teal) 100%);
     border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
+    padding: 1.5rem 1.5rem 1.25rem;
     margin-bottom: 2rem;
-    border-left: 4px solid var(--green);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(15,157,108,0.25);
   }
-  .theme-label { font-size: 11px; color: var(--green-mid); letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 700; }
-  .theme-title { font-size: 18px; font-weight: 700; color: var(--green-dark); margin-bottom: 0.75rem; line-height: 1.5; }
-  .theme-toc { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
-  .theme-toc li { font-size: 12px; background: var(--green-pale); color: var(--green-dark); padding: 3px 12px; border-radius: 20px; font-weight: 500; }
+  .theme-box .theme-deco { position: absolute; right: -18px; top: -18px; width: 130px; height: 130px; opacity: 0.18; }
+  .theme-label { font-size: 11px; color: #EFFFF7; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+  .theme-title { font-size: 21px; font-weight: 900; color: white; margin-bottom: 0.75rem; line-height: 1.5; position: relative; }
+  .theme-summary { font-size: 13px; color: rgba(255,255,255,0.92); line-height: 1.9; margin-bottom: 1.1rem; position: relative; }
+  .theme-toc { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; position: relative; }
+  .theme-toc li { font-size: 12px; background: rgba(255,255,255,0.22); color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
 
-  .sec { margin-bottom: 2.5rem; }
-  .sec-title {
-    font-size: 16px; font-weight: 700; color: var(--text);
-    margin-bottom: 1rem; padding-left: 12px;
-    border-left: 3px solid var(--green);
-    display: flex; align-items: center; gap: 8px;
+  .sec {
+    margin-bottom: 1.75rem;
+    background: var(--bg-muted);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.25rem;
   }
+  .sec.sec-white { background: var(--bg-card); }
+  .sec-title {
+    font-size: 17px; font-weight: 900; color: var(--text);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sec-title .sec-num {
+    font-size: 34px; font-weight: 900; color: var(--text-hint);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .sec-title .icon-badge {
+    width: 30px; height: 30px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .sec-title .icon-badge svg { width: 18px; height: 18px; }
 
   .summary-box {
     background: var(--bg-card);
-    border: 0.5px solid var(--border);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.25rem 1.5rem;
     font-size: 14px;
     line-height: 2;
     color: var(--text);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
   }
 
   .news-card {
     background: var(--bg-card);
-    border: 0.5px solid var(--border);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.75rem;
-    transition: box-shadow 0.2s;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.9rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s, transform 0.2s;
   }
-  .news-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-  .news-tag { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 4px; margin-bottom: 8px; font-weight: 500; background: var(--green-light); color: var(--green-mid); }
-  .news-tag.red { background: var(--red-light); color: #993C1D; }
-  .news-tag.blue { background: var(--blue-light); color: #185FA5; }
-  .news-tag.amber { background: var(--amber-light); color: #854F0B; }
-  .news-headline { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.5; }
+  .news-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.09); transform: translateY(-2px); }
+  .news-tag { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 4px; margin-bottom: 8px; font-weight: 700; background: var(--green-light); color: var(--green-mid); }
+  .news-tag.red { background: var(--red-light); color: var(--red-dark); }
+  .news-tag.blue { background: var(--blue-light); color: var(--blue-dark); }
+  .news-tag.amber { background: var(--amber-light); color: var(--amber-dark); }
+  .news-headline { font-size: 14px; font-weight: 900; color: var(--text); margin-bottom: 6px; line-height: 1.5; }
   .news-body { overflow-y: auto; font-size: 13px; color: var(--text-muted); line-height: 1.8; }
 
-  .cat-section { margin-bottom: 2rem; }
-  .cat-title {
+  .cat-tabs {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+  }
+  .cat-tab {
+    font-family: 'LINE Seed JP', sans-serif;
     font-size: 12px; font-weight: 700; color: var(--text-muted);
-    margin-bottom: 0.75rem; padding-bottom: 6px;
-    border-bottom: 1px solid var(--border-strong);
-    letter-spacing: 0.06em;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px; cursor: pointer;
   }
-  .asset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0.75rem; }
-  .asset-col { display: flex; flex-direction: column; gap: 8px; }
+  .cat-tab.active { background: var(--text); color: white; border-color: var(--text); }
 
-  .metric-card {
-    background: var(--bg-muted);
-    border-radius: var(--radius-sm);
-    padding: 0.875rem 1rem;
+  .cat-section {
+    margin-bottom: 1.25rem;
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    border: 1px solid var(--border);
   }
-  .metric-name { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-  .metric-value { font-size: 18px; font-weight: 700; color: var(--text); }
-  .metric-change { font-size: 12px; margin-top: 4px; font-weight: 500; }
-  .metric-rating { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .cat-section[data-cat-panel] { display: none; }
+  .cat-section[data-cat-panel].cat-panel-active { display: block; }
+  .cat-section.stock     { background: linear-gradient(180deg, var(--blue-light) 0%, #F5F9FE 100%); }
+  .cat-section.fx        { background: linear-gradient(180deg, var(--amber-light) 0%, #FDF9F2 100%); }
+  .cat-section.rate      { background: linear-gradient(180deg, var(--purple-light) 0%, #F8F6FF 100%); }
+  .cat-section.commodity { background: linear-gradient(180deg, var(--green-light) 0%, #F3FAF8 100%); }
+  .cat-section.crypto    { background: linear-gradient(180deg, var(--pink-light) 0%, #FEF6FA 100%); }
+  .cat-section.sentiment { background: linear-gradient(180deg, var(--red-light) 0%, #FEF6F5 100%); }
+  .cat-section.sector    { background: linear-gradient(180deg, var(--teal-light) 0%, #F3FBFB 100%); }
+
+  .cat-title {
+    font-size: 13px; font-weight: 900;
+    margin-bottom: 0.85rem;
+    display: flex; align-items: center; gap: 8px;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
+  .cat-title .cat-icon {
+    width: 30px; height: 30px; flex-shrink: 0;
+    border-radius: 9px;
+    padding: 5px;
+  }
+  .cat-section.stock     .cat-icon { background: var(--blue-light); }
+  .cat-section.fx        .cat-icon { background: var(--amber-light); }
+  .cat-section.rate      .cat-icon { background: var(--purple-light); }
+  .cat-section.commodity .cat-icon { background: var(--green-light); }
+  .cat-section.crypto    .cat-icon { background: var(--pink-light); }
+  .cat-section.sentiment .cat-icon { background: var(--red-light); }
+  .cat-section.sector    .cat-icon { background: var(--teal-light); }
+
+  .asset-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-bottom: 0.85rem; }
+  .asset-col {
+    display: flex; flex-direction: column; min-width: 0;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .metric-card { padding: 0.9rem 1rem; }
+  .metric-name { font-size: 13px; color: var(--text); margin-bottom: 6px; font-weight: 900; }
+  .metric-main { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
+  .metric-value { font-size: 26px; font-weight: 900; color: var(--text); line-height: 1.1; }
+  .metric-meta { text-align: right; flex-shrink: 0; }
+  .metric-change { font-size: 12px; font-weight: 700; }
+  .metric-rating { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
   .up { color: var(--green); }
   .down { color: var(--red); }
 
   .chart-wrap {
-    background: var(--bg-muted);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     flex: 1;
   }
-  .chart-label { font-size: 11px; color: var(--text-hint); margin-bottom: 6px; }
-  .chart-area { position: relative; height: 80px; }
-  .chart-area-sm { position: relative; height: 60px; }
+  .chart-label { font-size: 11px; color: var(--text-hint); margin-bottom: 6px; font-weight: 700; }
+  .chart-area { position: relative; height: 140px; }
+
+  .sector-toolbar { display: flex; justify-content: flex-end; margin-bottom: 0.6rem; }
+  .sector-sort-btn {
+    font-size: 11px; font-weight: 700; color: var(--teal-dark);
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 12px; cursor: pointer;
+    font-family: 'LINE Seed JP', sans-serif;
+  }
+  .sector-sort-btn:hover { background: var(--teal-light); }
+  .sector-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-bottom: 0.85rem; }
+  .sector-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 0.85rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .sector-name { font-size: 12px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+  .sector-code { font-weight: 400; color: #999; font-size: 10px; margin-left: 2px; }
+  .sector-note { font-size: 11px; color: #999; margin: -0.4rem 0 0.7rem; }
+  .sector-val { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+  .sector-value { font-size: 15px; font-weight: 900; color: var(--text); }
+  .sector-change { font-size: 11px; font-weight: 700; }
+  .sector-chart { position: relative; height: 80px; }
 
   .commentary {
     font-size: 13px; color: var(--text);
     line-height: 1.9;
-    background: var(--bg-card);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
+    background: rgba(255,255,255,0.7);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1.1rem;
   }
 
   .hot-badge {
     display: inline-block; font-size: 10px;
-    background: var(--red-light); color: #993C1D;
+    background: var(--red-light); color: var(--red-dark);
     padding: 2px 8px; border-radius: 4px;
     margin-left: 6px; vertical-align: middle; font-weight: 700;
   }
@@ -161,48 +286,39 @@
   .point-list { list-style: none; }
   .point-list li {
     font-size: 14px; color: var(--text); line-height: 1.9;
-    padding: 0.75rem 0 0.75rem 1.5rem;
+    padding: 0.75rem 0 0.75rem 2rem;
     position: relative;
-    border-bottom: 0.5px solid var(--border);
+    border-bottom: 1px dashed var(--border);
   }
   .point-list li:last-child { border-bottom: none; }
   .point-list li::before {
-    content: ""; position: absolute; left: 0; top: 50%;
+    content: "★"; position: absolute; left: 0; top: 50%;
     transform: translateY(-50%);
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--green);
+    font-size: 14px;
+    color: var(--amber);
   }
-
-  .coming-soon {
-    background: var(--bg-card);
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-sm);
-    padding: 0.875rem 1rem;
-  }
-  .coming-soon .metric-name { color: var(--text-hint); }
-  .coming-soon .metric-value { font-size: 13px; color: var(--text-hint); font-weight: 400; }
 
   .footer {
     text-align: center; font-size: 12px; color: var(--text-hint);
-    padding-top: 2rem; border-top: 0.5px solid var(--border);
+    padding-top: 2rem; border-top: 1px solid var(--border);
     margin-top: 2rem;
   }
 
   .cta-box {
-    background: var(--text);
+    background: linear-gradient(135deg, #1a1a18 0%, #33322d 100%);
     color: white;
     border-radius: var(--radius);
     padding: 1.5rem;
     text-align: center;
     margin: 2rem 0;
   }
-  .cta-box p { font-size: 14px; opacity: 0.8; margin-bottom: 1rem; }
+  .cta-box p { font-size: 14px; opacity: 0.85; margin-bottom: 1rem; }
   .cta-btn {
     display: inline-block;
     background: var(--green);
     color: white;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 900;
     padding: 0.75rem 2rem;
     border-radius: 8px;
     text-decoration: none;
@@ -212,8 +328,9 @@
 
   @media (max-width: 600px) {
     .asset-grid { grid-template-columns: 1fr; }
-    .report-title { font-size: 22px; }
+    .report-title { font-size: 24px; }
     .container { padding: 1.5rem 1rem 3rem; }
+    .news-card { flex-direction: column; }
   }
 </style>
 </head>
@@ -233,10 +350,14 @@
   </div>
 
   <div class="theme-box">
+    <svg class="theme-deco" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="50" fill="white"/>
+      <path d="M20 65 L38 45 L52 58 L80 25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
     <div class="theme-label">今週のテーマ</div>
     <div class="theme-title">方向感を探る1週間</div>
+    <div class="theme-summary">米フィラデルフィア半導体株指数（SOX）の急落をきっかけに、これまで相場を引っ張ってきたAI・半導体関連株の利益確定売りが広がり、日経平均は続落しました。ドル円は約40年ぶりの162円台に乗せた直後、米雇用統計の下振れを受けて急速に円高方向へ巻き戻される場面も。中東情勢の緊迫化は原油・金の両方を押し上げており、株式市場の過熱感の一服と、地政学リスクへの警戒が同時に進んだ1週間でした。</div>
     <ul class="theme-toc">
-      <li>今週のまとめ</li>
       <li>注目ニュース</li>
       <li>経済指標の動き</li>
       <li>来週のポイント</li>
@@ -244,103 +365,183 @@
   </div>
 
   <div class="sec">
-    <div class="sec-title">今週のまとめ</div>
-    <div class="summary-box">
-      日経平均は下落し（-2.6%）アメリカのS&P500も小幅に横ばいしました（+0.2%）。為替は161.9円台で安定していました。VIX（恐怖指数）は15.6と落ち着いた水準です。安全資産の金は大きく上昇（+3.2%）しました。
+    <div class="sec-title">
+      <span class="sec-num">01</span>
+      注目ニュース
+      <span class="icon-badge" style="background:var(--amber-light)">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4H20V16H9L4 20V4Z" stroke="#E08A00" stroke-width="2.2" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.2" fill="#E08A00"/><circle cx="13" cy="10" r="1.2" fill="#E08A00"/><circle cx="17" cy="10" r="1.2" fill="#E08A00"/></svg>
+      </span>
     </div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-title">注目ニュース</div>
     
     <div class="news-card">
       <div class="news-tag red">株式</div>
-      <div class="news-headline">日経平均、今週は下落（-2.6%）</div>
-      <div class="news-body">今週の日経平均は68,256円で取引を終えました。週間では下落し、変化率は-2.6%でした。アメリカのS&P500は+0.2%と対照的に横ばいしました。</div>
+      <div class="news-headline">日経平均、半導体株安と中東不安で続落</div>
+      <div class="news-body">今週の日経平均は66,819円。米フィラデルフィア半導体株指数（SOX）の急落を受けたAI・半導体関連株の利益確定売りに加え、中東情勢の緊迫化も重荷となり続落しました。一方、長期金利の上昇を背景に銀行株など金利敏感セクターには資金が向かい、値がさハイテク株からバリュー株へ物色が移る動きも見られています。</div>
     </div>
     <div class="news-card">
       <div class="news-tag amber">為替</div>
-      <div class="news-headline">為替は安定、ドル円161.9円台</div>
-      <div class="news-body">ドル円は161.9円台（-0.0%）と小幅な動きにとどまりました。ユーロ円は185.0円（+0.1%）でした。</div>
+      <div class="news-headline">ドル円、約40年ぶり162円台から米雇用統計で円高へ</div>
+      <div class="news-body">6月30日に1986年以来約40年ぶりとなる162円台に突入したドル円でしたが、米国の雇用統計で新規雇用者数が市場予想を大きく下回ったことを受けて急速に円高方向へ振れました。当局による円買い介入への警戒感も根強く、神経質な値動きが続いています。ドル円は162.5円となりました。</div>
     </div>
     <div class="news-card">
       <div class="news-tag amber">コモディティ</div>
-      <div class="news-headline">金は上昇、原油は上昇</div>
-      <div class="news-body">金は$4,153（+3.2%）、原油は$70.5（+1.5%）でした。ビットコインは$63,935（+9.2%）と仮想通貨市場も活況でした。</div>
+      <div class="news-headline">金・原油ともに地政学リスクで上昇基調</div>
+      <div class="news-body">金価格（$4,083）は地政学リスクの高まりや各国中央銀行の買い増しを背景に上昇基調が続いています。原油（$74.4）も中東情勢の緊迫化による供給不安から値を上げました。どちらも「世界のどこかで緊張が高まると値上がりしやすい」資産として覚えておくとニュースが読みやすくなります。</div>
     </div>
   </div>
 
   <div class="sec">
-    <div class="sec-title">経済指標の動き</div>
+    <div class="sec-title">
+      <span class="sec-num">02</span>
+      経済指標の動き
+      <span class="icon-badge" style="background:var(--blue-light)">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="12" width="4" height="8" rx="1" fill="#2E7DE1"/><rect x="10" y="7" width="4" height="13" rx="1" fill="#2E7DE1"/><rect x="16" y="3" width="4" height="17" rx="1" fill="#2E7DE1"/></svg>
+      </span>
+    </div>
 
-    <div class="cat-section">
-      <div class="cat-title">株式</div>
+    <div class="cat-tabs" id="catTabs">
+      <button type="button" class="cat-tab active" data-cat="stock">株式</button>
+      <button type="button" class="cat-tab" data-cat="fx">為替</button>
+      <button type="button" class="cat-tab" data-cat="rate">金利</button>
+      <button type="button" class="cat-tab" data-cat="commodity">コモディティ</button>
+      <button type="button" class="cat-tab" data-cat="crypto">暗号資産</button>
+      <button type="button" class="cat-tab" data-cat="sentiment">市場心理</button>
+      <button type="button" class="cat-tab" data-cat="sector">業種</button>
+    </div>
+
+    <div class="cat-section stock cat-panel-active" data-cat-panel="stock">
+      <div class="cat-title">
+        <svg class="cat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="10" width="4" height="10" rx="1" fill="#2E7DE1"/><rect x="10" y="5" width="4" height="15" rx="1" fill="#2E7DE1"/><rect x="17" y="13" width="4" height="7" rx="1" fill="#2E7DE1"/></svg>
+        株式
+      </div>
       <div class="asset-grid">
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">日経平均</div>
-            <div class="metric-value">68,256</div>
-            <div class="metric-change down">前週末比 -2.6%</div>
-            <div class="metric-rating">7/7時点</div>
+          <div class="metric-main">
+            <div class="metric-value">66,819</div>
+            <div class="metric-meta">
+              <div class="metric-change down">前週末比 -5.2%</div>
+              <div class="metric-rating">7/8時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">直近2週間の動き</div>
-            <div class="chart-area-sm"><canvas id="c1w"></canvas></div>
-          </div>
-          <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c1m"></canvas></div>
           </div>
         </div>
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">S&amp;P500</div>
-            <div class="metric-value">7,518</div>
-            <div class="metric-change up">前週末比 +0.2%</div>
+          <div class="metric-main">
+            <div class="metric-value">7,482</div>
+            <div class="metric-meta">
+              <div class="metric-change down">前週末比 -0.0%</div>
+              <div class="metric-rating">7/8時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">直近2週間の動き</div>
-            <div class="chart-area-sm"><canvas id="c2w"></canvas></div>
-          </div>
-          <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c2m"></canvas></div>
           </div>
         </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">ドイツ（DAX）</div>
+          <div class="metric-main">
+            <div class="metric-value">25,465</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +1.9%</div>
+              <div class="metric-rating">7/7時点</div>
+            </div>
+          </div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-area"><canvas id="c12m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">中国（上海総合）</div>
+          <div class="metric-main">
+            <div class="metric-value">4,041.2</div>
+            <div class="metric-meta">
+              <div class="metric-change down">前週末比 -0.8%</div>
+              <div class="metric-rating">7/6時点</div>
+            </div>
+          </div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-area"><canvas id="c13m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">ブラジル（ボベスパ）</div>
+          <div class="metric-main">
+            <div class="metric-value">170,653</div>
+            <div class="metric-meta">
+              <div class="metric-change down">前週末比 -0.6%</div>
+              <div class="metric-rating">7/8時点</div>
+            </div>
+          </div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-area"><canvas id="c14m"></canvas></div>
+          </div>
+        </div>
+        <div class="asset-col">
+          <div class="metric-card">
+            <div class="metric-name">インド（SENSEX）</div>
+          <div class="metric-main">
+            <div class="metric-value">78,180</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +2.2%</div>
+              <div class="metric-rating">7/7時点</div>
+            </div>
+          </div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-area"><canvas id="c15m"></canvas></div>
+          </div>
+        </div>
       </div>
-      <div class="commentary">日経・S&P500ともに2月の高値から大きく調整した後、4月に入り反発しています。ただし高値はまだ回復しておらず、関税問題の進展次第で方向感が決まりそうです。</div>
+      <div class="commentary">日経・S&amp;P500ともに2月の高値から大きく調整した後、4月に入り反発しています。ただし高値はまだ回復しておらず、関税問題の進展次第で方向感が決まりそうです。世界の主要市場も合わせて見ると、地域ごとの温度差が見えてきます。</div>
     </div>
 
-    <div class="cat-section">
-      <div class="cat-title">為替</div>
+    <div class="cat-section fx" data-cat-panel="fx">
+      <div class="cat-title">
+        <svg class="cat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#E08A00" stroke-width="2.2"/><path d="M9 9C9 7.5 10.5 7 12 7C13.5 7 15 7.7 15 9C15 10.5 13.5 10.8 12 11C10.5 11.2 9 11.7 9 13.2C9 14.5 10.5 15 12 15C13.5 15 15 14.5 15 13" stroke="#E08A00" stroke-width="2" stroke-linecap="round"/><path d="M12 5.5V7M12 15V16.5" stroke="#E08A00" stroke-width="2" stroke-linecap="round"/></svg>
+        為替
+      </div>
       <div class="asset-grid">
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">ドル円</div>
-            <div class="metric-value">161.9円</div>
-            <div class="metric-change down">前週末比 -0.0%</div>
+          <div class="metric-main">
+            <div class="metric-value">162.5円</div>
+            <div class="metric-meta">
+              <div class="metric-change down">前週末比 -0.0%</div>
+              <div class="metric-rating">7/9時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">直近2週間の動き</div>
-            <div class="chart-area-sm"><canvas id="c3w"></canvas></div>
-          </div>
-          <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c3m"></canvas></div>
           </div>
         </div>
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">ユーロ円</div>
-            <div class="metric-value">185.0円</div>
-            <div class="metric-change up">前週末比 +0.1%</div>
+          <div class="metric-main">
+            <div class="metric-value">185.6円</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +0.4%</div>
+              <div class="metric-rating">7/9時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">直近2週間の動き</div>
-            <div class="chart-area-sm"><canvas id="c4w"></canvas></div>
-          </div>
-          <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c4m"></canvas></div>
           </div>
         </div>
@@ -348,29 +549,39 @@
       <div class="commentary">円相場は145円台から143円台へじわじわ円高が進んでいます。アメリカ経済への不安からドルが売られやすい状況が続いています。</div>
     </div>
 
-    <div class="cat-section">
-      <div class="cat-title">金利</div>
+    <div class="cat-section rate" data-cat-panel="rate">
+      <div class="cat-title">
+        <svg class="cat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 20H20" stroke="#7C4DFF" stroke-width="2.2" stroke-linecap="round"/><path d="M6 20V10L12 4L18 10V20" stroke="#7C4DFF" stroke-width="2.2" stroke-linejoin="round"/><path d="M10 20V14H14V20" stroke="#7C4DFF" stroke-width="2.2" stroke-linejoin="round"/></svg>
+        金利
+      </div>
       <div class="asset-grid">
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">日本10年債利回り</div>
-            <div class="metric-value">2.82%</div>
-            <div class="metric-change up">前週末比 +4.1%</div>
-            <div class="metric-rating">7/6時点</div>
+          <div class="metric-main">
+            <div class="metric-value">2.83%</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +4.4%</div>
+              <div class="metric-rating">7/7時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c5m"></canvas></div>
           </div>
         </div>
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">米国10年債利回り</div>
-            <div class="metric-value">4.52%</div>
-            <div class="metric-change up">前週末比 +2.3%</div>
+          <div class="metric-main">
+            <div class="metric-value">4.57%</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +2.2%</div>
+              <div class="metric-rating">7/8時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c6m"></canvas></div>
           </div>
         </div>
@@ -378,36 +589,39 @@
       <div class="commentary">金利が下がっているということは「景気への不安」のサインの一つです。米国の金利は4%台を維持しており、住宅ローンや企業の借り入れコストに影響しています。</div>
     </div>
 
-    <div class="cat-section">
-      <div class="cat-title">コモディティ</div>
+    <div class="cat-section commodity" data-cat-panel="commodity">
+      <div class="cat-title">
+        <svg class="cat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" fill="#FFE39B" stroke="#0F9D6C" stroke-width="2"/><text x="12" y="16" font-size="10" font-weight="900" fill="#8A5300" text-anchor="middle" font-family="sans-serif">Au</text></svg>
+        コモディティ
+      </div>
       <div class="asset-grid">
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">金（ゴールド）</div>
-            <div class="metric-value">$4,153</div>
-            <div class="metric-change up">前週末比 +3.2%</div>
+          <div class="metric-main">
+            <div class="metric-value">$4,083</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +0.4%</div>
+              <div class="metric-rating">7/8時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">直近2週間の動き</div>
-            <div class="chart-area-sm"><canvas id="c7w"></canvas></div>
-          </div>
-          <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c7m"></canvas></div>
           </div>
         </div>
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">原油</div>
-            <div class="metric-value">$70.5</div>
-            <div class="metric-change up">前週末比 +1.5%</div>
+          <div class="metric-main">
+            <div class="metric-value">$74.4</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +8.5%</div>
+              <div class="metric-rating">7/8時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">直近2週間の動き</div>
-            <div class="chart-area-sm"><canvas id="c8w"></canvas></div>
-          </div>
-          <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c8m"></canvas></div>
           </div>
         </div>
@@ -415,28 +629,39 @@
       <div class="commentary">中東情勢の緊張から原油が急騰しました。原油が上がると、ガソリン・電気代・食品価格にも影響が出てきます。イランとアメリカの関係が今後のカギです。</div>
     </div>
 
-    <div class="cat-section">
-      <div class="cat-title">暗号資産</div>
+    <div class="cat-section crypto" data-cat-panel="crypto">
+      <div class="cat-title">
+        <svg class="cat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="#E24C93"/><text x="12" y="16.5" font-size="12" font-weight="900" fill="white" text-anchor="middle" font-family="sans-serif">₿</text></svg>
+        暗号資産
+      </div>
       <div class="asset-grid">
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">ビットコイン</div>
-            <div class="metric-value">$63,935</div>
-            <div class="metric-change up">前週末比 +9.2%</div>
+          <div class="metric-main">
+            <div class="metric-value">$62,174</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +1.1%</div>
+              <div class="metric-rating">7/9時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c9m"></canvas></div>
           </div>
         </div>
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">イーサリアム</div>
-            <div class="metric-value">$1,799</div>
-            <div class="metric-change up">前週末比 +14.6%</div>
+          <div class="metric-main">
+            <div class="metric-value">$1,740</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +2.5%</div>
+              <div class="metric-rating">7/9時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c10m"></canvas></div>
           </div>
         </div>
@@ -444,26 +669,37 @@
       <div class="commentary">株式市場が荒れる中、暗号資産は比較的安定した動きでした。24時間365日取引できるため、週末の動きにも注目してみましょう。</div>
     </div>
 
-    <div class="cat-section">
-      <div class="cat-title">市場心理</div>
+    <div class="cat-section sentiment" data-cat-panel="sentiment">
+      <div class="cat-title">
+        <svg class="cat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21C12 21 4 15.5 4 9.5C4 6.5 6.5 4.5 9 4.5C10.5 4.5 11.5 5.2 12 6.2C12.5 5.2 13.5 4.5 15 4.5C17.5 4.5 20 6.5 20 9.5C20 15.5 12 21 12 21Z" stroke="#E24C3F" stroke-width="2.2" stroke-linejoin="round"/></svg>
+        市場心理
+      </div>
       <div class="asset-grid">
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">VIX（恐怖指数）</div>
-            <div class="metric-value">15.6</div>
-            <div class="metric-change down">前週末比 -5.3%</div>
+          <div class="metric-main">
+            <div class="metric-value">16.9</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +1.9%</div>
+              <div class="metric-rating">7/8時点</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
-            <div class="chart-label">3ヶ月のトレンド</div>
             <div class="chart-area"><canvas id="c11m"></canvas></div>
           </div>
         </div>
         <div class="asset-col">
           <div class="metric-card">
             <div class="metric-name">Fear &amp; Greed Index</div>
-            <div class="metric-value">43.0</div>
-            <div class="metric-change up">前週末比 +41.2%</div>
-            <div class="metric-rating">fear</div>
+          <div class="metric-main">
+            <div class="metric-value">42.2</div>
+            <div class="metric-meta">
+              <div class="metric-change up">前週末比 +12.6%</div>
+              <div class="metric-rating">fear（7/9時点）</div>
+            </div>
+          </div>
           </div>
           <div class="chart-wrap">
             <div class="chart-label">Fear &amp; Greed ゲージ</div>
@@ -476,12 +712,169 @@
       <div class="commentary">VIXは「マーケットがどれだけ怖がっているか」を示す指数です。20以下なら落ち着いた状態、30を超えると「かなり不安」のサイン。今週は少し落ち着いてきましたがまだ高めの水準です。</div>
     </div>
 
+    <div class="cat-section sector" data-cat-panel="sector">
+      <div class="cat-title">
+        <svg class="cat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="#0DA5A5"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="#0DA5A5"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="#0DA5A5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="#0DA5A5"/></svg>
+        業種別動向（TOPIX-17・直近1ヶ月）
+      </div>
+      <div class="sector-note">各業種はNEXT FUNDS TOPIX-17シリーズETF（東証上場）の値動きを表示しています</div>
+      <div class="sector-toolbar">
+        <button type="button" class="sector-sort-btn" id="sectorSortBtn" onclick="toggleSectorSort()">変化率順に並び替え</button>
+      </div>
+      <div class="sector-grid" id="sectorGrid">
+        
+    <div class="sector-card" data-chg="9.432275368797496" data-orig="0">
+      <div class="sector-name">食品<span class="sector-code">（1617）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">48,960.0</span>
+        <span class="sector-change up">+9.4%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector0"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="-2.862254025044723" data-orig="1">
+      <div class="sector-name">エネルギー資源<span class="sector-code">（1618）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">32,580.0</span>
+        <span class="sector-change down">-2.9%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector1"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="9.423859498822019" data-orig="2">
+      <div class="sector-name">建設・資材<span class="sector-code">（1619）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">51,090.0</span>
+        <span class="sector-change up">+9.4%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector2"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="5.840804129312687" data-orig="3">
+      <div class="sector-name">素材・化学<span class="sector-code">（1620）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">38,960.0</span>
+        <span class="sector-change up">+5.8%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector3"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="5.957741600277104" data-orig="4">
+      <div class="sector-name">医薬品<span class="sector-code">（1621）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">30,590.0</span>
+        <span class="sector-change up">+6.0%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector4"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="6.313520172466893" data-orig="5">
+      <div class="sector-name">自動車・輸送機<span class="sector-code">（1622）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">34,520.0</span>
+        <span class="sector-change up">+6.3%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector5"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="-6.745490374412612" data-orig="6">
+      <div class="sector-name">鉄鋼・非鉄<span class="sector-code">（1623）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">61,520.0</span>
+        <span class="sector-change down">-6.7%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector6"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="5.845313056908638" data-orig="7">
+      <div class="sector-name">機械<span class="sector-code">（1624）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">89,090.0</span>
+        <span class="sector-change up">+5.8%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector7"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="2.98811013767209" data-orig="8">
+      <div class="sector-name">電機・精密<span class="sector-code">（1625）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">65,830.0</span>
+        <span class="sector-change up">+3.0%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector8"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="-0.5714285714285714" data-orig="9">
+      <div class="sector-name">情報通信・サービス<span class="sector-code">（1626）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">43,500.0</span>
+        <span class="sector-change down">-0.6%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector9"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="2.7336860670194003" data-orig="10">
+      <div class="sector-name">電力・ガス<span class="sector-code">（1627）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">11,650.0</span>
+        <span class="sector-change up">+2.7%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector10"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="3.9699830549503754" data-orig="11">
+      <div class="sector-name">運輸・物流<span class="sector-code">（1628）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">21,475.0</span>
+        <span class="sector-change up">+4.0%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector11"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="-1.279069767441865" data-orig="12">
+      <div class="sector-name">商社・卸売<span class="sector-code">（1629）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">254.7</span>
+        <span class="sector-change down">-1.3%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector12"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="7.830342577487764" data-orig="13">
+      <div class="sector-name">小売<span class="sector-code">（1630）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">39,660.0</span>
+        <span class="sector-change up">+7.8%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector13"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="9.113100081366966" data-orig="14">
+      <div class="sector-name">銀行<span class="sector-code">（1631）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">40,230.0</span>
+        <span class="sector-change up">+9.1%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector14"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="12.118921642731166" data-orig="15">
+      <div class="sector-name">金融（除く銀行）<span class="sector-code">（1632）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">44,500.0</span>
+        <span class="sector-change up">+12.1%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector15"></canvas></div>
+    </div>
+    <div class="sector-card" data-chg="9.554009819967266" data-orig="16">
+      <div class="sector-name">不動産<span class="sector-code">（1633）</span></div>
+      <div class="sector-val">
+        <span class="sector-value">53,550.0</span>
+        <span class="sector-change up">+9.6%</span>
+      </div>
+      <div class="sector-chart"><canvas id="sector16"></canvas></div>
+    </div>
+      </div>
+      <div class="commentary">日本株は業種によって値動きの温度差が大きく出ます。同じ「株式市場」でも、金利が上がると強い業種（銀行など）と弱い業種（不動産など）があるので、どこにお金が向かっているかを見ると経済の流れがつかみやすくなります。</div>
+    </div>
+
   </div>
 
-  <div class="sec">
-    <div class="sec-title">来週のマーケットポイント</div>
+  <div class="sec sec-white">
+    <div class="sec-title">
+      <span class="sec-num">03</span>
+      来週のマーケットポイント
+      <span class="icon-badge" style="background:var(--purple-light)">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14.5 8.5L21 9.3L16.2 13.8L17.5 20.3L12 17L6.5 20.3L7.8 13.8L3 9.3L9.5 8.5L12 2Z" fill="#7C4DFF"/></svg>
+      </span>
+    </div>
     <ul class="point-list">
-      <li>VIXは15.6と落ち着いた水準。引き続き主要指標の動きを確認しましょう</li><li>米国10年債利回りは4.52%と高水準。株式市場への影響に注目</li><li>来週も日米の経済指標の発表に注目しましょう</li>
+      <li>AI・半導体株の調整が一服するかは、来週発表される主要企業の決算内容が試金石。良い決算が出ても「期待先行で買われすぎていた分の売り」が出やすい局面なので、数字そのものより株価の反応の仕方に注目したい</li><li>米雇用統計の下振れをきっかけに、早期の利下げを織り込む思惑が強まりやすい状況。金利見通し次第で為替・株式とも振れやすいので、短期の値動きに一喜一憂せず全体の流れをつかむ意識を持とう</li><li>中東情勢が緊迫化する局面では、株式より金・原油などの実物資産にお金が向かいやすい傾向がある。ポートフォリオが株式に偏っている場合は、来週も値動きの荒さに備えておきたい</li>
     </ul>
   </div>
 
@@ -498,60 +891,201 @@
 </div>
 
 <script>
-function mkLine(id, labels, data, color) {
+const chartInstances = [];
+// 均等間隔のティックを自前生成し、必ず最新日（最終インデックス）を含める。
+// Chart.jsのautoSkipに任せると maxTicksLimit の間引きで最後のティックが
+// 消えてしまうことがあるため、afterBuildTicks で確定させ autoSkip は切る。
+function buildTicksKeepLast(maxCount) {
+  return (scale) => {
+    const lastIndex = scale.chart.data.labels.length - 1;
+    if (lastIndex < 0) return;
+    // ズームで表示範囲(scale.min〜scale.max)が絞られている場合は、
+    // データ全体ではなくその範囲内でラベルを作る（そうしないとズーム後も
+    // 全期間basisのラベルが残って表示範囲とズレる）
+    const rangeMin = Math.max(0, Math.round(scale.min ?? 0));
+    const rangeMax = Math.min(lastIndex, Math.round(scale.max ?? lastIndex));
+    const range = Math.max(1, rangeMax - rangeMin);
+    const step = Math.max(1, Math.ceil(range / (maxCount - 1)));
+    const ticks = [];
+    for (let i = rangeMin; i < rangeMax; i += step) {
+      ticks.push({ value: i });
+    }
+    ticks.push({ value: rangeMax });
+    scale.ticks = ticks;
+  };
+}
+function mkLine(id, labels, data, color, opts = {}) {
   const el = document.getElementById(id);
   if (!el) return;
-  new Chart(el.getContext('2d'), {
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false }
+    },
+    scales: {
+      x: { afterBuildTicks: buildTicksKeepLast(opts.tickCount || 5), grid: { display: false }, ticks: { autoSkip: false, font: { size: 10 }, color: '#888' } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 }, color: '#888', maxTicksLimit: 3, callback: v => v.toLocaleString() } }
+    }
+  };
+  // 試験実装：ピンチズームで時間軸を調整できるグラフ（日経平均のみで試行中）
+  // ホイールは常に右端（最新値）起点でズーム、ピンチは触った箇所を起点にする。
+  // ホイールをプラグイン任せにすると onZoom/onZoomComplete のタイミングで
+  // 内部状態と噛み合わずズームアウトできなくなる不具合が出たため、
+  // ホイールだけ自前でハンドリングする
+  const lastIndex = labels.length - 1;
+  if (opts.zoom) {
+    const minRange = opts.minRange || 2;
+    options.plugins.zoom = {
+      limits: { x: { min: 0, max: lastIndex, minRange } },
+      pan: { enabled: true, mode: 'x' },
+      zoom: {
+        pinch: { enabled: true },
+        wheel: { enabled: false },
+        mode: 'x'
+      }
+    };
+    // 初期表示は直近（最小レンジ＝2週間相当）から。ズームアウトで3ヶ月全体まで広げられる
+    options.scales.x.min = Math.max(0, lastIndex - minRange);
+    options.scales.x.max = lastIndex;
+  }
+  const chart = new Chart(el.getContext('2d'), {
     type: 'line',
     data: {
       labels,
       datasets: [{
         data,
         borderColor: color,
-        borderWidth: 1.5,
-        pointRadius: 2,
-        pointBackgroundColor: color,
+        borderWidth: 2,
+        pointRadius: 1.5,
+        pointHoverRadius: 5,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: color,
+        pointBorderWidth: 2,
         fill: true,
-        backgroundColor: color + '18',
-        tension: 0.3
+        backgroundColor: color + '33',
+        tension: 0
+      }]
+    },
+    options
+  });
+  chartInstances.push(chart);
+  if (opts.zoom) {
+    const minRange = opts.minRange || 2;
+    // データ点数が多い（日次90点など）場合に1刻みだと操作が重いので、
+    // 全体の4%程度をステップ幅にする（最低1）
+    const stepSize = Math.max(1, Math.round(lastIndex * 0.04));
+    el.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const xScale = chart.scales.x;
+      const curRange = Math.round(xScale.max - xScale.min);
+      // ホイールを上（deltaY<0）＝ズームイン、下＝ズームアウト。常に右端（最新値）起点。
+      // カテゴリ軸は整数インデックスに丸められるため、小数刻みの倍率だと
+      // 「変化が丸めで消えてズームが頭打ちになる」ので、整数ステップで動かす
+      const step = e.deltaY < 0 ? -stepSize : stepSize;
+      const newRange = Math.max(minRange, Math.min(lastIndex, curRange + step));
+      const newMin = Math.max(0, lastIndex - newRange);
+      chart.zoomScale('x', { min: newMin, max: lastIndex }, 'none');
+    }, { passive: false });
+  }
+  return chart;
+}
+
+const ZOOM_OPTS = { zoom: true, tickCount: 13, minRange: 13 };
+mkLine('c1m', ['2/20', '2/24', '2/25', '2/26', '2/27', '3/2', '3/3', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/3', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/30', '5/1', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [56825.7, 57321.09, 58583.12, 58753.39, 58850.27, 58057.24, 56279.05, 54245.54, 55278.06, 55620.84, 52728.72, 54248.39, 55025.37, 54452.96, 53819.61, 53751.15, 53700.39, 55239.4, 53372.53, 51515.49, 52252.28, 53749.62, 53603.65, 53373.07, 51885.85, 51063.72, 53739.68, 52463.27, 53123.49, 53413.68, 53429.56, 56308.42, 55895.32, 56924.11, 56502.77, 57877.39, 58134.24, 59518.34, 58475.9, 58824.89, 59349.17, 59585.86, 59140.23, 59716.18, 60537.36, 59917.46, 59284.92, 59513.12, 62833.84, 62713.65, 62417.88, 62742.57, 63272.11, 62654.05, 61409.29, 60815.95, 60550.59, 59804.41, 61684.14, 63339.07, 65158.19, 64996.09, 64999.41, 64693.12, 66329.5, 66934.33, 66734.24, 68402.13, 67470.69, 66588.12, 64024.6, 64562.18, 64179.27, 64217.27, 66020.04, 69317.5, 69404.5, 69902.25, 71053.49, 71250.06, 72353.96, 69788.38, 69468.11, 70062.32, 70474.96, 68733.15, 69744.07, 69737.69, 68256.96, 66819.05], '#2E7DE1', ZOOM_OPTS);
+mkLine('c2m', ['2/25', '2/26', '2/27', '3/2', '3/3', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/1', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7', '7/8'], [6946.13, 6908.86, 6878.88, 6881.62, 6816.63, 6869.5, 6830.71, 6740.02, 6795.99, 6781.48, 6775.8, 6672.62, 6632.19, 6699.38, 6716.09, 6624.7, 6606.49, 6506.48, 6581.0, 6556.37, 6591.9, 6477.16, 6368.85, 6343.72, 6528.52, 6575.32, 6582.69, 6611.83, 6616.85, 6782.81, 6824.66, 6816.89, 6886.24, 6967.38, 7022.95, 7041.28, 7126.06, 7109.14, 7064.01, 7137.9, 7108.4, 7138.89, 7173.91, 7138.8, 7135.95, 7209.01, 7230.12, 7200.75, 7259.22, 7365.12, 7337.11, 7398.93, 7412.84, 7400.96, 7444.25, 7501.24, 7408.5, 7403.05, 7353.61, 7432.97, 7445.72, 7473.47, 7519.12, 7520.36, 7563.63, 7580.06, 7599.96, 7609.78, 7553.68, 7584.31, 7383.74, 7405.73, 7386.65, 7266.99, 7394.3, 7431.46, 7554.29, 7511.35, 7420.1, 7500.58, 7472.79, 7365.46, 7358.22, 7440.43, 7499.36, 7483.23, 7483.24, 7537.43, 7518.07, 7482.71], '#2E7DE1', ZOOM_OPTS);
+mkLine('c3m', ['3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/3', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/1', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '5/30', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/13', '6/15', '6/16', '6/17', '6/18', '6/19', '6/20', '6/22', '6/23', '6/24', '6/25', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8', '7/9'], [157.85, 158.11, 159.07, 159.21, 159.57, 159.1, 158.89, 159.79, 157.92, 159.23, 158.48, 158.72, 159.38, 159.7, 160.23, 159.84, 158.58, 158.69, 159.49, 159.78, 159.68, 158.72, 158.64, 159.11, 159.68, 159.21, 158.79, 158.81, 159.2, 159.16, 158.84, 159.37, 159.7, 159.56, 159.54, 159.35, 159.55, 160.18, 157.02, 156.85, 157.21, 157.67, 156.42, 156.87, 156.9, 157.28, 157.68, 157.85, 158.73, 158.86, 158.86, 159.06, 158.91, 159.04, 158.93, 158.96, 159.21, 159.57, 159.27, 159.26, 159.37, 159.64, 159.97, 159.94, 160.29, 160.32, 160.19, 160.38, 160.53, 160.18, 160.18, 159.92, 160.25, 160.41, 160.6, 161.24, 161.27, 161.71, 161.55, 161.56, 161.74, 161.79, 161.92, 162.63, 162.54, 161.45, 161.45, 161.88, 162.34, 162.5], '#E08A00', ZOOM_OPTS);
+mkLine('c4m', ['3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/3', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/1', '5/3', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/25', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8', '7/9'], [182.86, 182.55, 183.35, 183.58, 183.62, 183.43, 182.46, 182.95, 183.36, 183.17, 182.82, 184.07, 183.93, 184.34, 184.27, 184.22, 184.13, 183.12, 183.48, 183.9, 184.06, 183.9, 184.3, 185.48, 184.96, 185.99, 186.42, 187.34, 187.35, 187.5, 187.56, 186.84, 187.19, 187.17, 186.6, 186.78, 186.8, 186.79, 186.9, 187.18, 184.22, 184.16, 183.94, 183.78, 184.71, 183.8, 184.04, 184.61, 185.21, 185.02, 184.96, 184.7, 184.51, 185.11, 184.6, 184.69, 184.72, 185.04, 184.95, 185.3, 185.37, 185.71, 185.66, 185.74, 185.91, 185.67, 184.68, 184.7, 184.82, 184.98, 185.21, 185.34, 185.6, 185.74, 186.24, 184.81, 184.82, 185.3, 184.59, 183.83, 183.63, 184.19, 184.9, 185.61, 184.92, 184.4, 184.65, 185.0, 185.15, 185.62], '#E08A00', ZOOM_OPTS);
+mkLine('c5m', ['4/1', '4/2', '4/3', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/30', '5/1', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '7/1', '7/2', '7/3', '7/6', '7/7'], [2.31, 2.4, 2.39, 2.43, 2.41, 2.37, 2.4, 2.44, 2.47, 2.42, 2.41, 2.41, 2.43, 2.4, 2.39, 2.41, 2.43, 2.44, 2.48, 2.47, 2.52, 2.51, 2.48, 2.48, 2.53, 2.55, 2.59, 2.63, 2.69, 2.73, 2.78, 2.77, 2.75, 2.75, 2.69, 2.71, 2.69, 2.69, 2.66, 2.68, 2.58, 2.65, 2.67, 2.67, 2.71, 2.67, 2.68, 2.68, 2.64, 2.59, 2.65, 2.61, 2.63, 2.66, 2.68, 2.68, 2.71, 2.78, 2.77, 2.82, 2.83], '#7C4DFF', ZOOM_OPTS);
+mkLine('c6m', ['2/24', '2/25', '2/26', '2/27', '3/2', '3/3', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/1', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/7', '7/8'], [4.03, 4.05, 4.02, 3.96, 4.05, 4.06, 4.08, 4.15, 4.13, 4.14, 4.14, 4.21, 4.27, 4.28, 4.22, 4.2, 4.26, 4.28, 4.39, 4.33, 4.39, 4.33, 4.42, 4.44, 4.34, 4.31, 4.32, 4.31, 4.34, 4.34, 4.29, 4.29, 4.32, 4.3, 4.26, 4.28, 4.31, 4.25, 4.25, 4.29, 4.29, 4.32, 4.31, 4.34, 4.35, 4.42, 4.39, 4.38, 4.45, 4.42, 4.36, 4.39, 4.36, 4.41, 4.46, 4.48, 4.46, 4.6, 4.62, 4.67, 4.57, 4.59, 4.56, 4.49, 4.48, 4.45, 4.45, 4.47, 4.45, 4.49, 4.48, 4.54, 4.55, 4.53, 4.54, 4.46, 4.49, 4.47, 4.43, 4.46, 4.45, 4.51, 4.49, 4.4, 4.37, 4.42, 4.47, 4.49, 4.52, 4.57], '#7C4DFF', ZOOM_OPTS);
+mkLine('c7m', ['3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/26', '4/27', '4/28', '4/29', '4/30', '5/1', '5/4', '5/5', '5/6', '5/7', '5/8', '5/10', '5/11', '5/12', '5/13', '5/14', '5/15', '5/17', '5/18', '5/19', '5/20', '5/21', '5/22', '5/24', '5/25', '5/26', '5/27', '5/28', '5/29', '5/31', '6/1', '6/2', '6/3', '6/4', '6/5', '6/7', '6/8', '6/9', '6/10', '6/11', '6/12', '6/14', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7', '7/8'], [5229.7, 5167.4, 5115.8, 5052.5, 4994.0, 5001.0, 4889.9, 4600.7, 4570.4, 4404.1, 4399.3, 4549.8, 4375.5, 4492.0, 4526.0, 4647.6, 4783.2, 4651.5, 4656.8, 4657.1, 4749.5, 4792.2, 4761.9, 4742.4, 4825.0, 4800.0, 4785.4, 4857.6, 4806.6, 4698.4, 4732.5, 4706.6, 4741.4, 4694.0, 4709.2, 4605.1, 4570.7, 4643.8, 4625.6, 4532.5, 4603.8, 4705.8, 4712.2, 4723.7, 4706.1, 4770.0, 4725.2, 4700.9, 4657.7, 4543.6, 4540.9, 4585.8, 4495.6, 4545.5, 4536.5, 4510.5, 4523.2, 4562.7, 4521.6, 4447.5, 4524.4, 4569.9, 4572.9, 4513.0, 4503.0, 4486.7, 4492.0, 4353.9, 4364.3, 4361.0, 4233.4, 4074.5, 4239.7, 4239.9, 4313.1, 4339.6, 4351.2, 4358.9, 4207.9, 4172.9, 4229.2, 4115.6, 4026.4, 4022.3, 4022.9, 4068.3, 4112.7, 4155.1, 4153.0, 4083.4], '#0F9D6C', ZOOM_OPTS);
+mkLine('c8m', ['3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/26', '4/27', '4/28', '4/29', '4/30', '5/1', '5/4', '5/5', '5/6', '5/7', '5/8', '5/10', '5/11', '5/12', '5/13', '5/14', '5/15', '5/17', '5/18', '5/19', '5/20', '5/21', '5/22', '5/24', '5/25', '5/26', '5/27', '5/28', '5/29', '5/31', '6/1', '6/2', '6/3', '6/4', '6/5', '6/7', '6/8', '6/9', '6/10', '6/11', '6/12', '6/14', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7', '7/8'], [83.45, 87.25, 95.73, 98.71, 93.5, 96.21, 96.32, 96.14, 98.32, 88.13, 92.35, 90.32, 94.48, 99.64, 102.88, 101.38, 100.12, 111.54, 112.41, 112.95, 94.41, 97.87, 96.57, 99.08, 91.28, 91.29, 94.69, 83.85, 89.61, 92.13, 92.96, 96.88, 94.98, 96.16, 96.7, 99.44, 107.96, 105.81, 102.5, 104.72, 99.93, 96.0, 96.88, 94.68, 98.46, 98.06, 102.1, 100.97, 101.93, 101.16, 102.6, 102.43, 103.93, 98.93, 97.76, 97.0, 96.6, 90.91, 93.22, 88.68, 88.47, 87.76, 89.4, 92.0, 94.82, 95.3, 92.92, 90.25, 92.69, 90.82, 89.14, 92.6, 86.1, 84.29, 80.96, 81.47, 75.87, 76.79, 75.37, 76.54, 75.4, 72.71, 69.98, 70.75, 69.5, 68.58, 68.69, 68.55, 70.53, 74.44], '#0F9D6C', ZOOM_OPTS);
+mkLine('c9m', ['4/9', '4/10', '4/11', '4/12', '4/13', '4/14', '4/15', '4/16', '4/17', '4/18', '4/19', '4/20', '4/21', '4/22', '4/23', '4/24', '4/25', '4/26', '4/27', '4/28', '4/29', '4/30', '5/1', '5/2', '5/3', '5/4', '5/5', '5/6', '5/7', '5/8', '5/9', '5/10', '5/11', '5/12', '5/13', '5/14', '5/15', '5/16', '5/17', '5/18', '5/19', '5/20', '5/21', '5/22', '5/23', '5/24', '5/25', '5/26', '5/27', '5/28', '5/29', '5/30', '5/31', '6/1', '6/2', '6/3', '6/4', '6/5', '6/6', '6/7', '6/8', '6/9', '6/10', '6/11', '6/12', '6/13', '6/14', '6/15', '6/16', '6/17', '6/18', '6/19', '6/20', '6/21', '6/22', '6/23', '6/24', '6/25', '6/28', '6/29', '6/30', '7/1', '7/2', '7/3', '7/4', '7/5', '7/6', '7/7', '7/8', '7/9'], [71767.83, 72979.05, 73054.27, 70753.41, 74484.64, 74181.61, 74805.08, 75152.13, 77126.88, 75726.21, 73856.35, 75872.52, 76352.77, 78203.1, 78023.91, 77629.9, 77497.95, 78657.54, 78775.76, 77340.0, 76343.14, 75778.72, 76374.62, 78248.91, 78714.99, 79827.91, 79947.0, 80950.72, 81454.71, 80020.2, 80168.45, 80670.6, 82267.28, 81676.5, 80473.7, 79329.36, 81110.98, 79037.3, 78127.99, 77281.17, 76947.03, 76772.84, 77462.53, 77491.88, 75443.18, 76624.01, 77010.5, 77206.0, 75846.0, 73536.55, 73580.65, 73364.22, 73782.54, 73555.71, 71256.88, 66691.78, 64298.01, 63659.26, 61199.99, 60845.96, 63206.16, 62755.56, 61677.51, 61558.99, 63542.01, 63550.02, 64384.64, 65708.09, 66281.02, 65636.15, 62896.47, 62825.92, 64239.68, 64190.45, 64062.42, 63894.88, 62714.97, 60981.98, 59532.34, 60138.38, 58558.86, 60003.76, 61485.3, 62544.2, 63088.3, 63547.88, 63995.02, 63935.75, 63401.02, 62174.19], '#E24C93', ZOOM_OPTS);
+mkLine('c10m', ['4/9', '4/10', '4/11', '4/12', '4/13', '4/14', '4/15', '4/16', '4/17', '4/18', '4/19', '4/20', '4/21', '4/22', '4/23', '4/24', '4/25', '4/26', '4/27', '4/28', '4/29', '4/30', '5/1', '5/2', '5/3', '5/4', '5/5', '5/6', '5/7', '5/8', '5/9', '5/10', '5/11', '5/12', '5/13', '5/14', '5/15', '5/16', '5/17', '5/18', '5/19', '5/20', '5/21', '5/22', '5/23', '5/24', '5/25', '5/26', '5/27', '5/28', '5/29', '5/30', '5/31', '6/1', '6/2', '6/3', '6/4', '6/5', '6/6', '6/7', '6/8', '6/9', '6/10', '6/11', '6/12', '6/13', '6/14', '6/15', '6/16', '6/17', '6/18', '6/19', '6/20', '6/21', '6/22', '6/23', '6/24', '6/25', '6/28', '6/29', '6/30', '7/1', '7/2', '7/3', '7/4', '7/5', '7/6', '7/7', '7/8', '7/9'], [2189.14, 2245.15, 2285.39, 2192.2, 2370.71, 2323.31, 2359.44, 2348.65, 2421.07, 2351.1, 2264.92, 2315.21, 2327.97, 2376.09, 2328.42, 2302.02, 2317.59, 2369.73, 2373.46, 2302.81, 2289.1, 2253.79, 2258.97, 2296.18, 2316.68, 2346.4, 2350.2, 2360.67, 2351.28, 2291.11, 2306.23, 2327.4, 2373.4, 2338.27, 2273.1, 2259.63, 2283.95, 2222.93, 2180.28, 2123.33, 2128.9, 2110.64, 2127.19, 2130.03, 2061.66, 2114.41, 2098.57, 2110.48, 2074.43, 2007.55, 2008.02, 2010.62, 2019.41, 2004.08, 2001.77, 1860.9, 1817.09, 1763.3, 1591.01, 1569.09, 1683.83, 1668.27, 1637.6, 1622.1, 1670.49, 1665.39, 1678.94, 1725.52, 1794.51, 1792.09, 1709.53, 1707.55, 1739.3, 1736.13, 1746.72, 1724.64, 1667.76, 1620.0, 1570.36, 1610.21, 1569.58, 1608.96, 1698.17, 1756.52, 1779.03, 1783.01, 1797.57, 1799.34, 1772.05, 1740.4], '#E24C93', ZOOM_OPTS);
+mkLine('c11m', ['2/26', '2/27', '3/2', '3/3', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/1', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7', '7/8'], [18.63, 19.86, 21.44, 23.57, 21.15, 23.75, 29.49, 25.5, 24.93, 24.23, 27.29, 27.19, 23.51, 22.37, 25.09, 24.06, 26.78, 26.15, 26.95, 25.33, 27.44, 31.05, 30.61, 25.25, 24.54, 23.87, 24.17, 25.78, 21.04, 19.49, 19.23, 19.12, 18.36, 18.17, 17.94, 17.48, 18.87, 19.5, 18.92, 19.31, 18.67, 18.02, 17.83, 18.81, 16.89, 16.99, 18.29, 17.38, 17.39, 17.08, 17.19, 18.38, 17.99, 17.87, 17.26, 18.43, 17.82, 18.06, 17.44, 16.76, 16.7, 16.59, 17.01, 16.29, 15.74, 15.32, 16.05, 15.77, 16.06, 15.4, 21.51, 18.92, 19.87, 22.22, 19.44, 17.68, 16.2, 16.41, 18.44, 16.4, 17.44, 19.49, 18.63, 17.65, 16.45, 16.59, 16.15, 15.57, 15.57, 16.9], '#E24C3F', ZOOM_OPTS);
+mkLine('c12m', ['2/24', '2/25', '2/26', '2/27', '3/2', '3/3', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [24986.25, 25175.94, 25289.02, 25284.26, 24638.0, 23790.65, 24205.36, 23815.75, 23591.03, 23409.37, 23968.63, 23640.03, 23589.65, 23447.29, 23564.01, 23730.92, 23502.25, 22839.56, 22380.19, 22653.86, 22636.91, 22957.08, 22612.97, 22300.75, 22562.88, 22680.04, 23298.89, 23168.08, 22921.59, 24080.63, 23806.99, 23803.95, 23742.44, 24044.22, 24066.7, 24154.47, 24702.24, 24417.8, 24270.87, 24194.9, 24155.45, 24149.14, 24083.53, 24018.26, 23954.56, 24292.38, 23991.27, 24401.7, 24918.69, 24663.61, 24338.63, 24350.28, 23954.93, 24136.81, 24456.26, 23950.57, 24307.92, 24400.65, 24737.24, 24606.77, 24888.56, 25389.1, 25184.89, 25177.8, 25092.25, 25104.7, 25003.04, 25124.17, 24795.94, 24944.95, 24759.05, 24616.22, 24433.06, 24195.31, 24209.71, 24635.3, 24894.01, 24910.41, 24934.67, 25026.8, 24985.82, 25139.69, 24893.58, 24626.89, 24995.81, 25040.28, 25580.88, 25779.31, 25817.89, 25465.25], '#2E7DE1', ZOOM_OPTS);
+mkLine('c13m', ['2/12', '2/13', '2/24', '2/25', '2/26', '2/27', '3/2', '3/3', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/3', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6'], [4134.02, 4082.07, 4117.41, 4147.23, 4146.63, 4162.88, 4182.59, 4122.68, 4082.47, 4108.57, 4124.19, 4096.6, 4123.14, 4133.43, 4129.1, 4095.45, 4084.79, 4049.91, 4062.98, 4006.55, 3957.05, 3813.28, 3881.28, 3931.84, 3889.08, 3913.72, 3923.29, 3891.86, 3948.55, 3919.28, 3880.1, 3890.17, 3995.0, 3966.17, 3986.23, 3988.56, 4026.62, 4027.21, 4055.55, 4051.43, 4082.13, 4085.08, 4106.26, 4093.25, 4079.9, 4086.34, 4078.64, 4107.51, 4112.16, 4160.17, 4180.09, 4179.95, 4225.02, 4214.49, 4242.57, 4177.92, 4135.39, 4131.53, 4169.54, 4162.19, 4077.28, 4112.9, 4152.57, 4145.37, 4093.73, 4098.64, 4068.57, 4057.74, 4075.1, 4083.97, 4057.78, 4027.74, 3959.34, 3961.2, 3993.23, 3987.01, 4031.51, 4096.47, 4091.89, 4108.08, 4090.48, 4163.1, 4106.25, 4110.81, 4073.9, 4094.4, 4112.44, 4028.9, 4043.64, 4041.24], '#2E7DE1', ZOOM_OPTS);
+mkLine('c14m', ['2/25', '2/26', '2/27', '3/2', '3/3', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/26', '3/27', '3/30', '3/31', '4/1', '4/2', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/14', '4/15', '4/16', '4/17', '4/20', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/28', '5/29', '6/1', '6/2', '6/3', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [191248.0, 191005.0, 188787.0, 189307.0, 183105.0, 185366.0, 180464.0, 179365.0, 180915.0, 183447.0, 183969.0, 179285.0, 177653.0, 179875.0, 180410.0, 179640.0, 180271.0, 176219.0, 181932.0, 182509.0, 185424.0, 182733.0, 181557.0, 182514.0, 187462.0, 187953.0, 188052.0, 188162.0, 188259.0, 192201.0, 195129.0, 197324.0, 198001.0, 198657.0, 197738.0, 196819.0, 195734.0, 196132.0, 192889.0, 191610.25, 190201.95, 189578.8, 188618.69, 184750.42, 187317.64, 185600.12, 186753.81, 187690.86, 183218.27, 184108.3, 181908.88, 180342.33, 177098.3, 178365.86, 177283.83, 176975.81, 174278.86, 177355.73, 177649.86, 176209.61, 177815.72, 176589.03, 175744.0, 175063.41, 173787.48, 172197.45, 174197.64, 170330.62, 169019.12, 168668.72, 169813.16, 168619.27, 171497.23, 171132.66, 170415.12, 169648.47, 168454.0, 168277.55, 168576.0, 170370.38, 171258.88, 170506.66, 173205.0, 172024.0, 171689.0, 172788.0, 174266.0, 172448.0, 171650.19, 170653.45], '#2E7DE1', ZOOM_OPTS);
+mkLine('c15m', ['2/18', '2/19', '2/20', '2/23', '2/24', '2/25', '2/26', '2/27', '3/2', '3/4', '3/5', '3/6', '3/9', '3/10', '3/11', '3/12', '3/13', '3/16', '3/17', '3/18', '3/19', '3/20', '3/23', '3/24', '3/25', '3/27', '3/30', '4/1', '4/2', '4/6', '4/7', '4/8', '4/9', '4/10', '4/13', '4/15', '4/16', '4/17', '4/20', '4/21', '4/22', '4/23', '4/24', '4/27', '4/28', '4/29', '4/30', '5/4', '5/5', '5/6', '5/7', '5/8', '5/11', '5/12', '5/13', '5/14', '5/15', '5/18', '5/19', '5/20', '5/21', '5/22', '5/25', '5/26', '5/27', '5/29', '6/1', '6/2', '6/3', '6/4', '6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [83734.25, 82498.14, 82814.71, 83294.66, 82225.92, 82276.07, 82248.61, 81287.19, 80238.85, 79116.19, 80015.9, 78918.9, 77566.16, 78205.98, 76863.71, 76034.42, 74563.92, 75502.85, 76070.84, 76704.13, 74207.24, 74532.96, 72696.39, 74068.45, 75273.45, 73583.22, 71947.55, 73134.32, 73319.55, 74106.85, 74616.58, 77562.9, 76631.65, 77550.25, 76847.57, 78111.24, 77988.68, 78493.54, 78520.3, 79273.33, 78516.49, 77664.0, 76664.21, 77303.63, 76886.91, 77496.36, 76913.5, 77269.4, 77017.79, 77958.52, 77844.52, 77328.19, 76015.28, 74559.24, 74608.98, 75398.72, 75237.99, 75315.04, 75200.85, 75318.39, 75183.36, 75415.35, 76488.96, 76009.7, 75867.8, 74775.74, 74267.34, 74649.84, 74346.17, 74360.01, 74243.34, 73524.26, 73918.76, 73983.18, 73832.55, 75527.95, 76264.33, 76808.48, 77155.62, 77409.98, 76802.9, 77094.07, 76200.68, 76728.37, 76478.67, 76922.64, 77502.12, 77763.91, 78285.07, 78180.72], '#2E7DE1', ZOOM_OPTS);
+
+// 業種カードのミニチャート（軸なし・シンプル表示）
+function mkSectorLine(id, labels, data, color) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const chart = new Chart(el.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: color,
+        borderWidth: 2,
+        pointRadius: 1.5,
+        pointHoverRadius: 5,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: color,
+        pointBorderWidth: 2,
+        fill: true,
+        backgroundColor: color + '33',
+        tension: 0
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#888', maxTicksLimit: 5 } },
-        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 }, color: '#888', maxTicksLimit: 3, callback: v => v.toLocaleString() } }
+        x: { display: true, afterBuildTicks: buildTicksKeepLast(4), grid: { display: false }, ticks: { autoSkip: false, font: { size: 9 }, color: '#999', maxRotation: 0 } },
+        y: { display: false }
       }
     }
   });
+  chartInstances.push(chart);
+  return chart;
 }
+mkSectorLine('sector0', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [44140.0, 44740.0, 44820.0, 45300.0, 46100.0, 45800.0, 45280.0, 45410.0, 45590.0, 46490.0, 46320.0, 46870.0, 46180.0, 46040.0, 47780.0, 47980.0, 47580.0, 48070.0, 48120.0, 48960.0, 48960.0, 48960.0], '#0F9D6C');
+mkSectorLine('sector1', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [34010.0, 33540.0, 33520.0, 32130.0, 32910.0, 32420.0, 32890.0, 32260.0, 32410.0, 32320.0, 32950.0, 32520.0, 32250.0, 31770.0, 31660.0, 31070.0, 31120.0, 31360.0, 31720.0, 32500.0, 32580.0, 32580.0], '#E24C3F');
+mkSectorLine('sector2', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [48380.0, 46690.0, 47330.0, 47390.0, 46970.0, 47670.0, 50250.0, 49620.0, 50300.0, 50850.0, 50590.0, 51050.0, 49750.0, 49720.0, 50500.0, 50460.0, 50710.0, 51330.0, 51390.0, 51820.0, 51090.0, 51090.0], '#0F9D6C');
+mkSectorLine('sector3', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [38200.0, 36810.0, 36670.0, 36510.0, 37070.0, 37890.0, 39210.0, 38830.0, 39420.0, 39400.0, 38990.0, 39390.0, 38810.0, 38330.0, 38640.0, 38760.0, 39100.0, 38920.0, 39120.0, 39880.0, 38960.0, 38960.0], '#0F9D6C');
+mkSectorLine('sector4', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [28585.0, 28870.0, 28750.0, 28535.0, 28145.0, 28570.0, 28630.0, 28600.0, 28775.0, 29295.0, 28415.0, 28835.0, 28810.0, 29060.0, 29600.0, 29485.0, 29110.0, 29915.0, 30220.0, 30840.0, 30590.0, 30590.0], '#0F9D6C');
+mkSectorLine('sector5', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [32810.0, 32470.0, 32910.0, 32410.0, 31970.0, 32200.0, 33580.0, 33200.0, 33010.0, 33030.0, 32350.0, 32420.0, 31910.0, 31670.0, 32510.0, 32210.0, 32120.0, 32120.0, 33480.0, 34450.0, 34520.0, 34520.0], '#0F9D6C');
+mkSectorLine('sector6', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [70090.0, 65970.0, 64820.0, 62250.0, 60990.0, 64130.0, 67080.0, 70850.0, 70500.0, 70000.0, 78000.0, 88000.0, 75620.0, 74460.0, 70500.0, 72020.0, 69370.0, 66430.0, 66820.0, 67200.0, 63570.0, 61520.0], '#E24C3F');
+mkSectorLine('sector7', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [87900.0, 84170.0, 84470.0, 83740.0, 82600.0, 84820.0, 89360.0, 89930.0, 91640.0, 92900.0, 91710.0, 93360.0, 90000.0, 89230.0, 89000.0, 89230.0, 92080.0, 90100.0, 92270.0, 94000.0, 94070.0, 89090.0], '#0F9D6C');
+mkSectorLine('sector8', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [67390.0, 63920.0, 64210.0, 63420.0, 63390.0, 64560.0, 68570.0, 68370.0, 69380.0, 70980.0, 70950.0, 72720.0, 69220.0, 69150.0, 69250.0, 70550.0, 71650.0, 69290.0, 70010.0, 69500.0, 67620.0, 65830.0], '#0F9D6C');
+mkSectorLine('sector9', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [44390.0, 43750.0, 43500.0, 43400.0, 43180.0, 42980.0, 43660.0, 43340.0, 43310.0, 43990.0, 43330.0, 43500.0, 42410.0, 42680.0, 42630.0, 42770.0, 42580.0, 43760.0, 44030.0, 44150.0, 43500.0, 43500.0], '#E24C3F');
+mkSectorLine('sector10', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [11380.0, 11340.0, 11345.0, 11390.0, 11450.0, 11465.0, 11575.0, 11400.0, 11395.0, 11430.0, 11355.0, 11375.0, 11270.0, 11285.0, 11430.0, 11415.0, 11210.0, 11335.0, 11415.0, 11625.0, 11570.0, 11650.0], '#0F9D6C');
+mkSectorLine('sector11', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [20510.0, 20655.0, 20845.0, 20690.0, 20740.0, 20610.0, 20570.0, 20585.0, 20345.0, 20385.0, 20230.0, 20070.0, 20325.0, 20255.0, 20615.0, 20550.0, 20175.0, 20675.0, 20715.0, 21420.0, 21475.0, 21475.0], '#0F9D6C');
+mkSectorLine('sector12', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [261.6, 258.0, 256.7, 251.7, 250.0, 253.2, 257.3, 252.8, 253.3, 252.9, 251.0, 252.3, 249.3, 247.0, 246.9, 245.0, 243.7, 247.0, 251.1, 253.8, 254.7, 254.7], '#E24C3F');
+mkSectorLine('sector13', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [36250.0, 36780.0, 36750.0, 37320.0, 36960.0, 37430.0, 37370.0, 37090.0, 37570.0, 37430.0, 37070.0, 36820.0, 36910.0, 37050.0, 38400.0, 37880.0, 37450.0, 37780.0, 38620.0, 38940.0, 39660.0, 39660.0], '#0F9D6C');
+mkSectorLine('sector14', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [37210.0, 36870.0, 37220.0, 37200.0, 36740.0, 37420.0, 38190.0, 37890.0, 38160.0, 39370.0, 38380.0, 38800.0, 37680.0, 37500.0, 37620.0, 37550.0, 37890.0, 38740.0, 39340.0, 39840.0, 40230.0, 40230.0], '#0F9D6C');
+mkSectorLine('sector15', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [39520.0, 39690.0, 40750.0, 40950.0, 40830.0, 40800.0, 41220.0, 41240.0, 41230.0, 41790.0, 41220.0, 41700.0, 41190.0, 40060.0, 40380.0, 40870.0, 40610.0, 41520.0, 42350.0, 42950.0, 43130.0, 44500.0], '#0F9D6C');
+mkSectorLine('sector16', ['6/5', '6/8', '6/9', '6/10', '6/11', '6/12', '6/15', '6/16', '6/17', '6/18', '6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7', '7/8'], [49900.0, 48880.0, 49560.0, 51400.0, 50730.0, 51470.0, 52360.0, 51250.0, 50750.0, 50970.0, 50000.0, 49790.0, 49050.0, 49000.0, 51470.0, 51460.0, 50200.0, 52400.0, 52140.0, 52900.0, 53550.0, 53550.0], '#0F9D6C');
 
-const m3 = ['2/3','2/17','3/3','3/17','3/31','4/7','4/14','4/18'];
-const wk = ['月','火','水','木','金'];
 
-mkLine('c1w', ['6/19', '6/22', '6/23', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [71250.06, 72353.96, 69788.38, 69468.11, 70062.32, 70474.96, 68733.15, 69744.07, 69737.69, 68256.96], '#1D9E75');
-mkLine('c1m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/19', '6/23', '7/3', '7/7'], [58475.9, 59716.18, 59513.12, 62713.65, 61409.29, 63339.07, 66329.5, 66588.12, 66020.04, 71250.06, 69788.38, 69744.07, 68256.96], '#1D9E75');
-mkLine('c2w', ['6/18', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7'], [7500.58, 7472.79, 7365.46, 7358.22, 7440.43, 7499.36, 7483.23, 7483.24, 7537.43, 7518.07], '#1D9E75');
-mkLine('c2m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/18', '6/24', '7/2', '7/7'], [7126.06, 7138.89, 7230.12, 7398.93, 7408.5, 7473.47, 7580.06, 7383.74, 7431.46, 7500.58, 7358.22, 7483.24, 7518.07], '#1D9E75');
-mkLine('c3w', ['6/23', '6/24', '6/25', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [161.55, 161.56, 161.74, 161.79, 161.92, 162.63, 162.54, 161.45, 161.45, 161.88], '#378ADD');
-mkLine('c3m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/30', '6/5', '6/13', '6/20', '6/25', '7/3', '7/7'], [159.2, 159.56, 157.02, 156.87, 158.73, 159.04, 159.26, 160.29, 160.18, 161.27, 161.74, 161.45, 161.88], '#378ADD');
-mkLine('c4w', ['6/23', '6/24', '6/25', '6/29', '6/30', '7/1', '7/2', '7/3', '7/6', '7/7'], [184.59, 183.83, 183.63, 184.19, 184.9, 185.61, 184.92, 184.4, 184.65, 185.0], '#378ADD');
-mkLine('c4m', ['4/17', '4/24', '5/3', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/19', '6/25', '7/3', '7/7'], [187.56, 186.78, 184.16, 184.04, 184.7, 184.72, 185.71, 184.68, 185.34, 184.82, 183.63, 184.4, 185.0], '#378ADD');
-mkLine('c5m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/19', '6/23', '7/3', '7/6'], [2.43, 2.44, 2.51, 2.48, 2.69, 2.75, 2.66, 2.67, 2.64, 2.66, 2.68, 2.77, 2.82], '#534AB7');
-mkLine('c6m', ['4/17', '4/24', '5/1', '5/8', '5/15', '5/22', '5/29', '6/5', '6/12', '6/18', '6/24', '7/2', '7/7'], [4.25, 4.31, 4.38, 4.36, 4.6, 4.56, 4.45, 4.54, 4.49, 4.45, 4.4, 4.49, 4.52], '#534AB7');
-mkLine('c7w', ['6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7'], [4172.9, 4229.2, 4115.6, 4026.4, 4022.3, 4022.9, 4068.3, 4112.7, 4155.1, 4153.0], '#BA7517');
-mkLine('c7m', ['4/17', '4/26', '5/1', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/19', '6/24', '7/2', '7/7'], [4857.6, 4694.0, 4625.6, 4706.1, 4540.9, 4523.2, 4572.9, 4364.3, 4313.1, 4172.9, 4026.4, 4112.7, 4153.0], '#BA7517');
-mkLine('c8w', ['6/19', '6/22', '6/23', '6/24', '6/29', '6/30', '7/1', '7/2', '7/6', '7/7'], [76.54, 75.4, 72.71, 69.98, 70.75, 69.5, 68.58, 68.69, 68.55, 70.53], '#D85A30');
-mkLine('c8m', ['4/17', '4/26', '5/1', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/19', '6/24', '7/2', '7/7'], [83.85, 96.16, 102.5, 98.46, 102.6, 96.6, 89.4, 92.69, 80.96, 76.54, 69.98, 68.69, 70.53], '#D85A30');
-mkLine('c9m', ['4/19', '4/26', '5/3', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/21', '6/28', '7/5', '7/7'], [73856.35, 78657.54, 78714.99, 80670.6, 78127.99, 76624.01, 73782.54, 60845.96, 64384.64, 64190.45, 59532.34, 63547.88, 63935.75], '#F0997B');
-mkLine('c10m', ['4/19', '4/26', '5/3', '5/10', '5/17', '5/24', '5/31', '6/7', '6/14', '6/21', '6/28', '7/5', '7/7'], [2264.92, 2369.73, 2316.68, 2327.4, 2180.28, 2114.41, 2019.41, 1569.09, 1678.94, 1736.13, 1570.36, 1783.01, 1799.34], '#AFA9EC');
-mkLine('c11m', m3, [16,18,22,28,32,38,35,15.6], '#854F0B');
+// 業種カードの並び替え（TOPIX順 ⇔ 変化率順）
+let sectorSorted = false;
+function toggleSectorSort() {
+  const grid = document.getElementById('sectorGrid');
+  const btn = document.getElementById('sectorSortBtn');
+  const cards = Array.from(grid.children);
+  sectorSorted = !sectorSorted;
+  if (sectorSorted) {
+    cards.sort((a, b) => parseFloat(b.dataset.chg) - parseFloat(a.dataset.chg));
+    btn.textContent = 'TOPIX順に戻す';
+  } else {
+    cards.sort((a, b) => parseInt(a.dataset.orig) - parseInt(b.dataset.orig));
+    btn.textContent = '変化率順に並び替え';
+  }
+  cards.forEach(c => grid.appendChild(c));
+}
 
 // Fear & Greed ゲージ（SVG動的生成）
 (function() {
-  const score = 43.0;
+  const score = 42.2;
   const container = document.getElementById('fngGauge').parentElement;
 
   const cx = 150, cy = 148, r = 108;
@@ -566,11 +1100,11 @@ mkLine('c11m', m3, [16,18,22,28,32,38,35,15.6], '#854F0B');
   }
 
   const zones = [
-    [0,  25,  '#E8533A'],
-    [25, 45,  '#F5921E'],
+    [0,  25,  '#E24C3F'],
+    [25, 45,  '#E08A00'],
     [45, 55,  '#F5C518'],
     [55, 75,  '#8CC63F'],
-    [75, 100, '#2BAE7E'],
+    [75, 100, '#0F9D6C'],
   ];
 
   const activeZone = zones.find(z => score >= z[0] && score < z[1]) || zones[4];
@@ -584,15 +1118,15 @@ mkLine('c11m', m3, [16,18,22,28,32,38,35,15.6], '#854F0B');
     const p1 = point(s1);
     const p2 = point(s2);
     const large = (s2 - s1) > 50 ? 1 : 0;
-    paths += `<path d="M ${p1[0]},${p1[1]} A${r},${r} 0 ${large},1 ${p2[0]},${p2[1]}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round"/>`;
+    paths += `<path d="M ${p1[0]},${p1[1]} A${r},${r} 0 ${large},1 ${p2[0]},${p2[1]}" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round"/>`;
   });
 
   const dot = point(score);
   const svg = `<svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;display:block;margin:0 auto;">
     ${paths}
-    <circle cx="${dot[0]}" cy="${dot[1]}" r="15" fill="#F1EFE8"/>
+    <circle cx="${dot[0]}" cy="${dot[1]}" r="15" fill="#F5F1E6"/>
     <circle cx="${dot[0]}" cy="${dot[1]}" r="9" fill="white"/>
-    <text x="150" y="150" font-size="42" font-weight="bold" fill="#1a1a18" text-anchor="middle" font-family="sans-serif">${score.toFixed(1)}</text>
+    <text x="150" y="150" font-size="42" font-weight="900" fill="#1a1a18" text-anchor="middle" font-family="sans-serif">${score.toFixed(1)}</text>
     <text x="150" y="170" font-size="14" fill="#888" text-anchor="middle" font-family="sans-serif">${activeLabel}</text>
   </svg>`;
 
@@ -600,6 +1134,21 @@ mkLine('c11m', m3, [16,18,22,28,32,38,35,15.6], '#854F0B');
   canvas.style.display = 'none';
   container.insertAdjacentHTML('beforeend', svg);
 })();
+
+// 経済指標カテゴリのタブ切り替え
+document.querySelectorAll('.cat-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.cat;
+    document.querySelectorAll('.cat-tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.cat-section[data-cat-panel]').forEach(panel => {
+      panel.classList.toggle('cat-panel-active', panel.dataset.catPanel === target);
+    });
+    // display:noneから復帰したcanvasはサイズ0のままのことがあるのでリサイズし直す
+    requestAnimationFrame(() => {
+      chartInstances.forEach(c => c && c.resize());
+    });
+  });
+});
 </script>
 </body>
 </html>
