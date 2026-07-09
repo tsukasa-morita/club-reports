@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>レポートアーカイブ｜経済・投資体験CLUB</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+<style>
+  @font-face {
+    font-family: 'LINE Seed JP';
+    src: url('fonts/LINESeedJP_Rg.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'LINE Seed JP';
+    src: url('fonts/LINESeedJP_Bd.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'LINE Seed JP';
+    src: url('fonts/LINESeedJP_Eb.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+  }
+
+  :root {
+    --green: #0F9D6C;
+    --green-light: #D6F5E8;
+    --green-dark: #076B4A;
+    --green-mid: #0C8A5F;
+    --green-pale: #9FE8CB;
+
+    --blue: #2E7DE1;
+    --blue-light: #DCEAFE;
+    --blue-dark: #1B4F9C;
+
+    --amber: #E08A00;
+    --amber-light: #FDECC8;
+    --amber-dark: #8A5300;
+
+    --purple: #7C4DFF;
+    --purple-light: #E7DEFF;
+    --purple-dark: #4E2AAE;
+
+    --red: #E24C3F;
+    --red-light: #FBDCD8;
+    --red-dark: #9C2E23;
+
+    --pink: #E24C93;
+    --pink-light: #FCDEED;
+    --pink-dark: #9C2E63;
+
+    --teal: #0DA5A5;
+    --teal-light: #D3F3F3;
+    --teal-dark: #076E6E;
+
+    --gray: #888780;
+    --bg: #F0F4F8;
+    --bg-card: #FFFFFF;
+    --bg-muted: #E1E9F0;
+    --text: #1a2a3a;
+    --text-muted: #5F6B7A;
+    --text-hint: #8894A0;
+    --border: rgba(26,58,92,0.08);
+    --border-strong: rgba(26,58,92,0.15);
+    --radius: 16px;
+    --radius-sm: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { overflow-y: auto;
+    font-family: 'LINE Seed JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  .page-header {
+    background: var(--text);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .page-header .brand { font-size: 13px; letter-spacing: 0.08em; opacity: 0.8; font-weight: 700; }
+  .page-header .deadline { font-size: 12px; background: var(--red); color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
+
+  .container { max-width: 840px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .report-header { margin-bottom: 1.5rem; }
+  .report-vol { font-size: 12px; color: var(--text-hint); letter-spacing: 0.1em; margin-bottom: 6px; font-weight: 700; }
+  .report-title { font-family: 'LINE Seed JP', sans-serif; font-weight: 900; font-size: 30px; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+  .report-date { font-size: 13px; color: var(--text-muted); }
+
+  .theme-box {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, var(--teal) 100%);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.5rem 1.25rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(15,157,108,0.25);
+  }
+  .theme-box .theme-deco { position: absolute; right: -18px; top: -18px; width: 130px; height: 130px; opacity: 0.18; }
+  .theme-label { font-size: 11px; color: #EFFFF7; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 700; text-transform: uppercase; }
+  .theme-title { font-size: 21px; font-weight: 900; color: white; margin-bottom: 0.75rem; line-height: 1.5; position: relative; }
+  .theme-summary { font-size: 13px; color: rgba(255,255,255,0.92); line-height: 1.9; margin-bottom: 1.1rem; position: relative; }
+  .theme-toc { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; position: relative; }
+  .theme-toc li { font-size: 12px; background: rgba(255,255,255,0.22); color: white; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
+
+  .sec {
+    margin-bottom: 1.75rem;
+    background: var(--bg-muted);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.25rem;
+  }
+  .sec.sec-white { background: var(--bg-card); }
+  .sec-title {
+    font-size: 17px; font-weight: 900; color: var(--text);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sec-title .sec-num {
+    font-size: 34px; font-weight: 900; color: var(--text-hint);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .sec-title .icon-badge {
+    width: 30px; height: 30px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .sec-title .icon-badge svg { width: 18px; height: 18px; }
+
+  .summary-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  }
+
+  .news-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.9rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .news-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.09); transform: translateY(-2px); }
+  .news-tag { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 4px; margin-bottom: 8px; font-weight: 700; background: var(--green-light); color: var(--green-mid); }
+  .news-tag.red { background: var(--red-light); color: var(--red-dark); }
+  .news-tag.blue { background: var(--blue-light); color: var(--blue-dark); }
+  .news-tag.amber { background: var(--amber-light); color: var(--amber-dark); }
+  .news-headline { font-size: 14px; font-weight: 900; color: var(--text); margin-bottom: 6px; line-height: 1.5; }
+  .news-body { overflow-y: auto; font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+
+  .cat-tabs {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+  }
+  .cat-tab {
+    font-family: 'LINE Seed JP', sans-serif;
+    font-size: 12px; font-weight: 700; color: var(--text-muted);
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px; cursor: pointer;
+  }
+  .cat-tab.active { background: var(--text); color: white; border-color: var(--text); }
+
+  .cat-section {
+    margin-bottom: 1.25rem;
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+  }
+  .cat-section[data-cat-panel] { display: none; }
+  .cat-section[data-cat-panel].cat-panel-active { display: block; }
+  .cat-section.stock     { background: linear-gradient(180deg, var(--blue-light) 0%, #F5F9FE 100%); }
+  .cat-section.fx        { background: linear-gradient(180deg, var(--amber-light) 0%, #FDF9F2 100%); }
+  .cat-section.rate      { background: linear-gradient(180deg, var(--purple-light) 0%, #F8F6FF 100%); }
+  .cat-section.commodity { background: linear-gradient(180deg, var(--green-light) 0%, #F3FAF8 100%); }
+  .cat-section.crypto    { background: linear-gradient(180deg, var(--pink-light) 0%, #FEF6FA 100%); }
+  .cat-section.sentiment { background: linear-gradient(180deg, var(--red-light) 0%, #FEF6F5 100%); }
+  .cat-section.sector    { background: linear-gradient(180deg, var(--teal-light) 0%, #F3FBFB 100%); }
+
+  .cat-title {
+    font-size: 13px; font-weight: 900;
+    margin-bottom: 0.85rem;
+    display: flex; align-items: center; gap: 8px;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
+  .cat-title .cat-icon {
+    width: 30px; height: 30px; flex-shrink: 0;
+    border-radius: 9px;
+    padding: 5px;
+  }
+  .cat-section.stock     .cat-icon { background: var(--blue-light); }
+  .cat-section.fx        .cat-icon { background: var(--amber-light); }
+  .cat-section.rate      .cat-icon { background: var(--purple-light); }
+  .cat-section.commodity .cat-icon { background: var(--green-light); }
+  .cat-section.crypto    .cat-icon { background: var(--pink-light); }
+  .cat-section.sentiment .cat-icon { background: var(--red-light); }
+  .cat-section.sector    .cat-icon { background: var(--teal-light); }
+
+  .asset-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-bottom: 0.85rem; }
+  .asset-col {
+    display: flex; flex-direction: column; min-width: 0;
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .metric-card { padding: 0.9rem 1rem; }
+  .metric-name { font-size: 13px; color: var(--text); margin-bottom: 6px; font-weight: 900; }
+  .metric-main { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
+  .metric-value { font-size: 26px; font-weight: 900; color: var(--text); line-height: 1.1; }
+  .metric-meta { text-align: right; flex-shrink: 0; }
+  .metric-change { font-size: 12px; font-weight: 700; }
+  .metric-rating { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+
+  .chart-wrap {
+    padding: 0.75rem 1rem;
+    flex: 1;
+  }
+  .chart-label { font-size: 11px; color: var(--text-hint); margin-bottom: 6px; font-weight: 700; }
+  .chart-area { position: relative; height: 140px; }
+
+  .sector-toolbar { display: flex; justify-content: flex-end; margin-bottom: 0.6rem; }
+  .sector-sort-btn {
+    font-size: 11px; font-weight: 700; color: var(--teal-dark);
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 12px; cursor: pointer;
+    font-family: 'LINE Seed JP', sans-serif;
+  }
+  .sector-sort-btn:hover { background: var(--teal-light); }
+  .sector-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-bottom: 0.85rem; }
+  .sector-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 0.85rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .sector-name { font-size: 12px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+  .sector-code { font-weight: 400; color: #999; font-size: 10px; margin-left: 2px; }
+  .sector-note { font-size: 11px; color: #999; margin: -0.4rem 0 0.7rem; }
+  .sector-val { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+  .sector-value { font-size: 15px; font-weight: 900; color: var(--text); }
+  .sector-change { font-size: 11px; font-weight: 700; }
+  .sector-chart { position: relative; height: 80px; }
+
+  .commentary {
+    font-size: 13px; color: var(--text);
+    line-height: 1.9;
+    background: rgba(255,255,255,0.7);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1.1rem;
+  }
+
+  .hot-badge {
+    display: inline-block; font-size: 10px;
+    background: var(--red-light); color: var(--red-dark);
+    padding: 2px 8px; border-radius: 4px;
+    margin-left: 6px; vertical-align: middle; font-weight: 700;
+  }
+
+  .point-list { list-style: none; }
+  .point-list li {
+    font-size: 14px; color: var(--text); line-height: 1.9;
+    padding: 0.75rem 0 0.75rem 2rem;
+    position: relative;
+    border-bottom: 1px dashed var(--border);
+  }
+  .point-list li:last-child { border-bottom: none; }
+  .point-list li::before {
+    content: "★"; position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--amber);
+  }
+
+  .footer {
+    text-align: center; font-size: 12px; color: var(--text-hint);
+    padding-top: 2rem; border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, #1a1a18 0%, #33322d 100%);
+    color: white;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    margin: 2rem 0;
+  }
+  .cta-box p { font-size: 14px; opacity: 0.85; margin-bottom: 1rem; }
+  .cta-btn {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .cta-btn:hover { background: var(--green-mid); }
+
+  @media (max-width: 600px) {
+    .asset-grid { grid-template-columns: 1fr; }
+    .report-title { font-size: 24px; }
+    .container { padding: 1.5rem 1rem 3rem; }
+    .news-card { flex-direction: column; }
+  }
+</style>
+</head>
+
+<body style="margin:0; padding:0;">
+
+<div class="page-header">
+  <div class="brand">経済・投資体験CLUB</div>
+</div>
+
+<div class="container" style="max-width:840px;">
+  <div class="report-header">
+    <h1 class="report-title">レポートアーカイブ</h1>
+    <div class="report-date"><a href="/" style="color:var(--teal-dark);">← 最新レポートに戻る</a></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;">
+    
+    <a href="/20260709.html" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.95rem 1.1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:4px;">方向感を探る1週間</div>
+      <div style="font-size:11px;color:var(--text-hint);">2026年7月6日（月）〜 7月10日（金）</div>
+    </a>
+    <a href="/20260708.html" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.95rem 1.1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:14px;font-weight:900;color:var(--text);">2026年07月08日のレポート</div>
+      
+    </a>
+    <a href="/20260426.html" style="display:block;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.95rem 1.1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:14px;font-weight:900;color:var(--text);">2026年04月26日のレポート</div>
+      
+    </a>
+  </div>
+</div>
+
+</body>
+</html>
